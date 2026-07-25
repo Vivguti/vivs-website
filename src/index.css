@@ -1,0 +1,359 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap');
+@import "tailwindcss";
+
+/* ─── Design Tokens ─────────────────────────────────────────────────────────── */
+@theme {
+  --color-primary:       #ffffff;
+  --color-secondary:     #e2e8f0;
+  --color-accent:        #64748b;
+  --color-background:    #93A3B9; /* The blue-grey from reference image 1 */
+  --color-surface:       rgba(255, 255, 255, 0.15); /* Base for glassmorphism */
+  --color-surface-hover: rgba(255, 255, 255, 0.25);
+  --color-text:          #ffffff;
+  --color-text-muted:    rgba(255, 255, 255, 0.7);
+
+  --font-display:        'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-body:           'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* ─── Base Reset ────────────────────────────────────────────────────────────── */
+@layer base {
+  :root {
+    color-scheme: light dark;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html, body {
+    width: 100%;
+    /* min-height not height — height:100% caps the page to the viewport
+       and prevents the 500vh hero section from creating real scroll space */
+    min-height: 100%;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  #root {
+    width: 100%;
+    /* No height:100% and no flex — both prevent children from expanding
+       past viewport height, which kills the 500vh scroll animation */
+    min-height: 100%;
+  }
+}
+
+/* ─── Utilities ─────────────────────────────────────────────────────────────── */
+@layer utilities {
+  .glass-panel {
+    background: var(--color-surface);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+  }
+  
+  .glass-panel-heavy {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+  }
+
+  .glass-nav {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.4) 100%);
+    backdrop-filter: blur(28px) saturate(190%);
+    -webkit-backdrop-filter: blur(28px) saturate(190%);
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.18), 0 4px 12px 0 rgba(0, 0, 0, 0.08), inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.9);
+    color: #1a1a1a;
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .text-shadow-subtle {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* ─── Scroll line animation ─────────────────────────────────────────────────── */
+@keyframes scroll-line-drop {
+  0%   { transform: translateY(-100%); opacity: 0;   }
+  20%  { opacity: 0.55; }
+  80%  { opacity: 0.55; }
+  100% { transform: translateY(100%);  opacity: 0;   }
+}
+
+.scroll-line {
+  position:         absolute;
+  top:              0;
+  left:             0;
+  width:            1px;
+  height:           100%;
+  background:       rgba(255, 255, 255, 0.55);
+  animation:        scroll-line-drop 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  will-change:      transform, opacity;
+}
+
+/* ─── Hero Walkthrough Styles ──────────────────────────────────────────────── */
+
+.hero-manifesto {
+  font-family: var(--font-body);
+  font-weight: 800;
+  text-transform: uppercase;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: #1a1a1a;
+}
+
+@keyframes grid-pulse {
+  0%, 100% { opacity: 0.04; }
+  50%      { opacity: 0.08; }
+}
+
+.hero-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: grid-pulse 4s ease-in-out infinite;
+}
+
+@keyframes room-glow {
+  0%   { opacity: 0; filter: blur(20px); }
+  100% { opacity: 0.6; filter: blur(40px); }
+}
+
+.scroll-progress-track {
+  position: fixed;
+  right: 32px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 30vh;
+  background: rgba(255,255,255,0.12);
+  border-radius: 1px;
+  z-index: 40;
+  overflow: hidden;
+}
+
+.scroll-progress-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(255,255,255,0.7);
+  border-radius: 1px;
+  transition: height 0.1s linear;
+}
+
+.scroll-phase-label {
+  position: fixed;
+  right: 48px;
+  font-family: var(--font-body);
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  transform: translateY(-50%);
+  z-index: 40;
+  transition: color 0.4s ease, opacity 0.4s ease;
+  white-space: nowrap;
+}
+
+.scroll-phase-label.active {
+  color: rgba(255,255,255,0.85);
+}
+
+.cta-explore {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 14px 20px 14px 32px;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 100px;
+  background: rgba(255,255,255,0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: white;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  text-decoration: none;
+  margin: 0 auto;
+}
+
+.cta-explore:hover {
+  background: rgba(255,255,255,0.18);
+  border-color: rgba(255,255,255,0.45);
+  gap: 26px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+}
+
+.cta-explore .cta-arrow {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cta-explore:hover .cta-arrow {
+  background: rgba(255,255,255,0.3);
+  transform: translateX(4px);
+}
+
+.hero-blueprint {
+  filter: saturate(0.15) brightness(1.05) contrast(1.1);
+  mix-blend-mode: multiply;
+}
+
+.hero-render {
+  filter: saturate(1.2) brightness(1.0) contrast(1.05);
+}
+
+.ambient-glow {
+  background: radial-gradient(ellipse at center, rgba(255, 180, 80, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.arch-annotation {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.arch-annotation .marker {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(4px);
+}
+
+.arch-annotation .leader {
+  width: 30px;
+  height: 1px;
+  background: rgba(255,255,255,0.3);
+  transform-origin: left;
+}
+
+.arch-annotation .label {
+  font-family: var(--font-body);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  white-space: nowrap;
+}
+
+.hero-section-img {
+  will-change: transform, opacity, filter;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* ─── VG Monogram 3D Coin Spin ─────────────────────────────────────────────── */
+
+/* Container — sets up perspective for the 3D effect */
+.monogram-coin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  perspective: 800px;
+  cursor: pointer;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+/* Inner wrapper — holds front/back faces in 3D space */
+.coin-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.15s ease;
+  /* Subtle idle tilt for a 3D feel */
+  animation: coin-idle 5s ease-in-out infinite;
+}
+
+/* On hover, spin like a coin — slowed down for elegance */
+.monogram-coin:hover .coin-inner {
+  animation: coin-spin 2.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Each face — no circle outline, transparent background, just the letters */
+.coin-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  /* No border-radius, no box-shadow, no background — raw 3D letters only */
+}
+
+/* Back face — rotated 180° on Y so it shows when the front faces away */
+.coin-back {
+  transform: rotateY(180deg);
+}
+
+/* The monogram image — fill the container */
+.monogram-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: 
+    drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25)) 
+    drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+  pointer-events: none;
+}
+
+/* ─── Coin Keyframes ───────────────────────────────────────────────────────── */
+
+/* Idle: subtle 3D tilt rock */
+@keyframes coin-idle {
+  0%, 100% {
+    transform: rotateY(0deg) rotateX(0deg);
+  }
+  25% {
+    transform: rotateY(5deg) rotateX(1.5deg);
+  }
+  50% {
+    transform: rotateY(0deg) rotateX(0deg);
+  }
+  75% {
+    transform: rotateY(-5deg) rotateX(-1.5deg);
+  }
+}
+
+/* Spin: full coin-flip rotation on Y axis */
+@keyframes coin-spin {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(720deg);
+  }
+}
+
+
