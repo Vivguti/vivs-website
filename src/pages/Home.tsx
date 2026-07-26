@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react';
-import { motion, useScroll, useTransform, type MotionValue } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring, type MotionValue } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import ScrollProgress from '../components/ScrollProgress';
 
@@ -50,24 +50,33 @@ export default function Home() {
     offset: ['start start', 'end end'],
   });
 
+  // Smooth the raw scroll value so mobile's coarse scroll jumps become
+  // a fluid spring interpolation — stiffness/damping chosen so it feels
+  // instant on desktop but buttery on mobile.
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 80,
+    damping: 20,
+    restDelta: 0.0005,
+  });
+
   /* ═══════════════════════════════════════════════════════════════════════════
      ACT 1 — THE BLUEPRINT  (0 → 0.30)
      Blueprint visible immediately. Scales from subtle zoom to settled.
      Manifesto 1 types in word-by-word on the left.
   ═══════════════════════════════════════════════════════════════════════════ */
-  const bp_scale     = useTransform(scrollYProgress, [0, 0.12],   [1.12, 1.05]);
-  const bp_y         = useTransform(scrollYProgress, [0, 0.55],   ['0%', '-8%']);
+  const bp_scale     = useTransform(smoothProgress, [0, 0.12],   [1.12, 1.05]);
+  const bp_y         = useTransform(smoothProgress, [0, 0.55],   ['0%', '-8%']);
   const bp_filter    = useTransform(
-    scrollYProgress, [0, 0.25, 0.50],
+    smoothProgress, [0, 0.25, 0.50],
     ['brightness(1.05) contrast(1.1)', 'brightness(1.0) contrast(1.05)', 'brightness(0.9) contrast(1.0)']
   );
 
   // Grid overlay pulsing behind blueprint
-  const gridOp = useTransform(scrollYProgress, [0, 0.06, 0.22, 0.32], [0, 0.07, 0.07, 0]);
+  const gridOp = useTransform(smoothProgress, [0, 0.06, 0.22, 0.32], [0, 0.07, 0.07, 0]);
 
   // Manifesto 1 container
-  const m1_op = useTransform(scrollYProgress, [0.03, 0.07, 0.24, 0.30], [0, 1, 1, 0]);
-  const m1_y  = useTransform(scrollYProgress, [0.03, 0.07, 0.24, 0.30], [50, 0, 0, -40]);
+  const m1_op = useTransform(smoothProgress, [0.03, 0.07, 0.24, 0.30], [0, 1, 1, 0]);
+  const m1_y  = useTransform(smoothProgress, [0.03, 0.07, 0.24, 0.30], [50, 0, 0, -40]);
 
   /* ═══════════════════════════════════════════════════════════════════════════
      ACT 2 — THE METAMORPHOSIS  (0.25 → 0.55)
@@ -76,58 +85,58 @@ export default function Home() {
      Manifesto 2 appears.
   ═══════════════════════════════════════════════════════════════════════════ */
   // Clip-path reveal — circle grows from center
-  const clipProgress = useTransform(scrollYProgress, [0.25, 0.52], [0, 150]);
+  const clipProgress = useTransform(smoothProgress, [0.25, 0.52], [0, 150]);
   const renderClip   = useTransform(clipProgress, (v) => `circle(${v}% at 55% 50%)`);
 
   // Render layer
-  const rn_opacity = useTransform(scrollYProgress, [0.24, 0.30], [0, 1]);
-  const rn_scale   = useTransform(scrollYProgress, [0.25, 0.55, 0.78], [1.08, 1.02, 1.0]);
-  const rn_y       = useTransform(scrollYProgress, [0.25, 0.80], ['0%', '-6%']);
+  const rn_opacity = useTransform(smoothProgress, [0.24, 0.30], [0, 1]);
+  const rn_scale   = useTransform(smoothProgress, [0.25, 0.55, 0.78], [1.08, 1.02, 1.0]);
+  const rn_y       = useTransform(smoothProgress, [0.25, 0.80], ['0%', '-6%']);
 
   // Blueprint layer fades out during crossfade
-  const bp_fadeout  = useTransform(scrollYProgress, [0.35, 0.52], [1, 0]);
+  const bp_fadeout  = useTransform(smoothProgress, [0.35, 0.52], [1, 0]);
 
   // Warm ambient glow intensifies
-  const glowOp = useTransform(scrollYProgress, [0.32, 0.50, 0.72, 0.84], [0, 0.7, 0.7, 0]);
+  const glowOp = useTransform(smoothProgress, [0.32, 0.50, 0.72, 0.84], [0, 0.7, 0.7, 0]);
 
   // Manifesto 2 container
-  const m2_op = useTransform(scrollYProgress, [0.32, 0.37, 0.52, 0.58], [0, 1, 1, 0]);
-  const m2_y  = useTransform(scrollYProgress, [0.32, 0.37, 0.52, 0.58], [50, 0, 0, -40]);
+  const m2_op = useTransform(smoothProgress, [0.32, 0.37, 0.52, 0.58], [0, 1, 1, 0]);
+  const m2_y  = useTransform(smoothProgress, [0.32, 0.37, 0.52, 0.58], [50, 0, 0, -40]);
 
   /* ═══════════════════════════════════════════════════════════════════════════
      ACT 3 — THE REVEAL  (0.55 → 0.82)
      Full render visible. Slow cinematic zoom. CTA + annotations appear.
   ═══════════════════════════════════════════════════════════════════════════ */
   // Annotations fade in
-  const annOp = useTransform(scrollYProgress, [0.48, 0.56, 0.72, 0.80], [0, 1, 1, 0]);
+  const annOp = useTransform(smoothProgress, [0.48, 0.56, 0.72, 0.80], [0, 1, 1, 0]);
 
   /* ═══════════════════════════════════════════════════════════════════════════
      ACT 4 — THE FINAL FRAME (0.70 → 1.0)
      Blue overlay settles over the render. Selected Works spread appears & stays fixed.
   ═══════════════════════════════════════════════════════════════════════════ */
   // Blue overlay - transitions to full opacity at 0.85 and stays solid through 1.0
-  const blueOverlayOp = useTransform(scrollYProgress, [0.70, 0.85, 1.0], [0, 1.0, 1.0]);
+  const blueOverlayOp = useTransform(smoothProgress, [0.70, 0.85, 1.0], [0, 1.0, 1.0]);
 
   // Selected Works spread - fades in by 0.85 and stays locked at opacity 1, y 0, scale 1 through 1.0
-  const ctaOp    = useTransform(scrollYProgress, [0.72, 0.85, 1.0], [0, 1, 1]);
-  const ctaY     = useTransform(scrollYProgress, [0.72, 0.85, 1.0], [30, 0, 0]);
-  const ctaScale = useTransform(scrollYProgress, [0.72, 0.85, 1.0], [0.95, 1, 1]);
+  const ctaOp    = useTransform(smoothProgress, [0.72, 0.85, 1.0], [0, 1, 1]);
+  const ctaY     = useTransform(smoothProgress, [0.72, 0.85, 1.0], [30, 0, 0]);
+  const ctaScale = useTransform(smoothProgress, [0.72, 0.85, 1.0], [0.95, 1, 1]);
 
-  // Scroll cue
+  // Scroll cue — use raw progress so it hides immediately when user starts scrolling
   const cueOp = useTransform(scrollYProgress, [0, 0.035], [1, 0]);
 
-  // Progress bar visibility - stays visible once final frame is active
+  // Progress bar visibility — raw progress so it's always in sync with real scroll
   const progressVis = useTransform(scrollYProgress, [0, 0.05, 0.85, 1.0], [0, 1, 1, 1]);
 
   // Background tone shift
   const bgColor = useTransform(
-    scrollYProgress,
+    smoothProgress,
     [0, 0.25, 0.50, 0.80, 1.0],
     ['#93A3B9', '#8A9BB3', '#7B8FA6', '#6E8298', '#93A3B9']
   );
 
   // ─── Vignette intensity ──────────────────────────────────────────────────
-  const vignetteOp = useTransform(scrollYProgress, [0, 0.10, 0.50, 0.80], [0.6, 0.3, 0.2, 0.4]);
+  const vignetteOp = useTransform(smoothProgress, [0, 0.10, 0.50, 0.80], [0.6, 0.3, 0.2, 0.4]);
 
   return (
     <>
@@ -217,7 +226,7 @@ export default function Home() {
                   key={`m1-${i}`}
                   word={word}
                   index={i}
-                  scrollProgress={scrollYProgress}
+                  scrollProgress={smoothProgress}
                   baseOffset={0.04}
                   stagger={0.014}
                 />
@@ -236,7 +245,7 @@ export default function Home() {
                   key={`m2-${i}`}
                   word={word}
                   index={i}
-                  scrollProgress={scrollYProgress}
+                  scrollProgress={smoothProgress}
                   baseOffset={0.33}
                   stagger={0.014}
                 />

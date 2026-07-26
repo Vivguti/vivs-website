@@ -405,9 +405,12 @@
 
   /* Ensure the hero sticky container scrolls properly on mobile browsers.
      touch-action:pan-y tells the browser only vertical touch pans are needed,
-     which prevents any gesture conflict with the scroll-linked animations.     */
+     which prevents any gesture conflict with the scroll-linked animations.
+     overscroll-behavior:none stops iOS bounce from pushing scrollYProgress
+     below 0 or above 1, which would make the spring overshoot at boundaries. */
   .hero-scroll-container {
     touch-action: pan-y;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: none;
   }
 }
