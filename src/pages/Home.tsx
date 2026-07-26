@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect } from 'react';
 import { motion, useScroll, useTransform, useSpring, type MotionValue, type MotionStyle } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import ScrollProgress from '../components/ScrollProgress';
@@ -14,8 +14,7 @@ const MANIFESTO_2 = [
   'a better', 'architect', 'than I was', 'yesterday.',
 ];
 
-// ─── Desktop: per-word scroll-linked stagger ───────────────────────────────────
-// Each word fades + slides in as the user scrolls through its narrow window.
+// ─── Staggered word sub-component (scroll-linked across mobile & desktop) ──────
 function ManifestoWord({
   word, index, scrollProgress, baseOffset, stagger,
 }: {
@@ -23,38 +22,18 @@ function ManifestoWord({
   baseOffset: number; stagger: number;
 }) {
   const start = baseOffset + index * stagger;
-  const end = start + 0.018;
+  const end = start + 0.022;
   const opacity = useTransform(scrollProgress, [start, end], [0, 1]);
-  const y = useTransform(scrollProgress, [start, end], [24, 0]);
+  const y = useTransform(scrollProgress, [start, end], [18, 0]);
 
   return (
-    <motion.span className="inline-block mr-[0.3em]" style={{ opacity, y }}>
+    <motion.span className="inline-block mr-[0.3em] transform-gpu" style={{ opacity, y }}>
       {word}
     </motion.span>
   );
 }
 
-// ─── Mobile: time-based stagger, no scroll-linked transforms per word ──────────
-// The CONTAINER's spring-animated opacity/y handles the entrance; words just
-// appear with a simple CSS transition so there's nothing choppy to track.
-function ManifestoWordMobile({ word, index }: { word: string; index: number }) {
-  return (
-    <motion.span
-      className="inline-block mr-[0.3em]"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{
-        delay: 0.05 + index * 0.06,
-        duration: 0.55,
-        ease: [0.22, 1, 0.36, 1],
-      }}
-    >
-      {word}
-    </motion.span>
-  );
-}
-
-// ─── Unified manifesto block — picks rendering strategy by platform ────────────
+// ─── Manifesto Block ───────────────────────────────────────────────────────────
 function ManifestoBlock({
   words,
   containerStyle,
@@ -62,7 +41,6 @@ function ManifestoBlock({
   scrollProgress,
   baseOffset,
   stagger,
-  isMobile,
 }: {
   words: string[];
   containerStyle: MotionStyle;
@@ -70,25 +48,20 @@ function ManifestoBlock({
   scrollProgress: MotionValue<number>;
   baseOffset: number;
   stagger: number;
-  isMobile: boolean;
 }) {
   return (
-    <motion.div className={containerClass} style={containerStyle}>
+    <motion.div className={`${containerClass} transform-gpu`} style={containerStyle}>
       <div className="hero-manifesto text-[22px] sm:text-[28px] md:text-[38px] lg:text-[46px] leading-[1.0]">
-        {words.map((word, i) =>
-          isMobile ? (
-            <ManifestoWordMobile key={`${word}-${i}`} word={word} index={i} />
-          ) : (
-            <ManifestoWord
-              key={`${word}-${i}`}
-              word={word}
-              index={i}
-              scrollProgress={scrollProgress}
-              baseOffset={baseOffset}
-              stagger={stagger}
-            />
-          )
-        )}
+        {words.map((word, i) => (
+          <ManifestoWord
+            key={`${word}-${i}`}
+            word={word}
+            index={i}
+            scrollProgress={scrollProgress}
+            baseOffset={baseOffset}
+            stagger={stagger}
+          />
+        ))}
       </div>
     </motion.div>
   );
@@ -106,91 +79,81 @@ export default function Home() {
     window.scrollTo(0, 0);
   }, []);
 
-  // Detect mobile to choose the right word animation strategy.
-  // (Must be a state/effect, not a conditional hook, to respect Rules of Hooks.)
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
-  useEffect(() => {
-    const handler = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener('resize', handler);
-    return () => window.removeEventListener('resize', handler);
-  }, []);
-
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ['start start', 'end end'],
   });
 
-  // Smooth the raw scroll value so mobile's coarse scroll jumps become
-  // a fluid spring interpolation — stiffness/damping chosen so it feels
-  // instant on desktop but buttery on mobile.
+  // Accelerated spring interpolation — high stiffness & optimized damping
+  // so scrolling drives the animation faster, snappier, and butter-smooth on mobile.
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 80,
-    damping: 20,
-    restDelta: 0.0005,
+    stiffness: 140,
+    damping: 22,
+    restDelta: 0.0001,
   });
 
   /* ═══════════════════════════════════════════════════════════════════════════
-     ACT 1 — THE BLUEPRINT  (0 → 0.30)
+     ACT 1 — THE BLUEPRINT  (0 → 0.22)
      Blueprint visible immediately. Scales from subtle zoom to settled.
-     Manifesto 1 types in word-by-word on the left.
+     Manifesto 1 types in word-by-word with scroll.
   ═══════════════════════════════════════════════════════════════════════════ */
-  const bp_scale     = useTransform(smoothProgress, [0, 0.12],   [1.12, 1.05]);
-  const bp_y         = useTransform(smoothProgress, [0, 0.55],   ['0%', '-8%']);
+  const bp_scale     = useTransform(smoothProgress, [0, 0.12],   [1.10, 1.03]);
+  const bp_y         = useTransform(smoothProgress, [0, 0.45],   ['0%', '-6%']);
   const bp_filter    = useTransform(
-    smoothProgress, [0, 0.25, 0.50],
+    smoothProgress, [0, 0.20, 0.40],
     ['brightness(1.05) contrast(1.1)', 'brightness(1.0) contrast(1.05)', 'brightness(0.9) contrast(1.0)']
   );
 
   // Grid overlay pulsing behind blueprint
-  const gridOp = useTransform(smoothProgress, [0, 0.06, 0.22, 0.32], [0, 0.07, 0.07, 0]);
+  const gridOp = useTransform(smoothProgress, [0, 0.04, 0.18, 0.26], [0, 0.07, 0.07, 0]);
 
   // Manifesto 1 container
-  const m1_op = useTransform(smoothProgress, [0.03, 0.07, 0.24, 0.30], [0, 1, 1, 0]);
-  const m1_y  = useTransform(smoothProgress, [0.03, 0.07, 0.24, 0.30], [50, 0, 0, -40]);
+  const m1_op = useTransform(smoothProgress, [0.015, 0.05, 0.20, 0.26], [0, 1, 1, 0]);
+  const m1_y  = useTransform(smoothProgress, [0.015, 0.05, 0.20, 0.26], [40, 0, 0, -30]);
 
   /* ═══════════════════════════════════════════════════════════════════════════
-     ACT 2 — THE METAMORPHOSIS  (0.25 → 0.55)
+     ACT 2 — THE METAMORPHOSIS  (0.20 → 0.48)
      Render image crossfades over blueprint via clip-path wipe.
      Blueprint fades to 0. Render saturates to full warmth.
-     Manifesto 2 appears.
+     Manifesto 2 appears faster.
   ═══════════════════════════════════════════════════════════════════════════ */
   // Clip-path reveal — circle grows from center
-  const clipProgress = useTransform(smoothProgress, [0.25, 0.52], [0, 150]);
+  const clipProgress = useTransform(smoothProgress, [0.18, 0.44], [0, 150]);
   const renderClip   = useTransform(clipProgress, (v) => `circle(${v}% at 55% 50%)`);
 
   // Render layer
-  const rn_opacity = useTransform(smoothProgress, [0.24, 0.30], [0, 1]);
-  const rn_scale   = useTransform(smoothProgress, [0.25, 0.55, 0.78], [1.08, 1.02, 1.0]);
-  const rn_y       = useTransform(smoothProgress, [0.25, 0.80], ['0%', '-6%']);
+  const rn_opacity = useTransform(smoothProgress, [0.18, 0.25], [0, 1]);
+  const rn_scale   = useTransform(smoothProgress, [0.18, 0.48, 0.70], [1.06, 1.02, 1.0]);
+  const rn_y       = useTransform(smoothProgress, [0.18, 0.70], ['0%', '-5%']);
 
   // Blueprint layer fades out during crossfade
-  const bp_fadeout  = useTransform(smoothProgress, [0.35, 0.52], [1, 0]);
+  const bp_fadeout  = useTransform(smoothProgress, [0.28, 0.44], [1, 0]);
 
   // Warm ambient glow intensifies
-  const glowOp = useTransform(smoothProgress, [0.32, 0.50, 0.72, 0.84], [0, 0.7, 0.7, 0]);
+  const glowOp = useTransform(smoothProgress, [0.25, 0.42, 0.65, 0.76], [0, 0.7, 0.7, 0]);
 
   // Manifesto 2 container
-  const m2_op = useTransform(smoothProgress, [0.32, 0.37, 0.52, 0.58], [0, 1, 1, 0]);
-  const m2_y  = useTransform(smoothProgress, [0.32, 0.37, 0.52, 0.58], [50, 0, 0, -40]);
+  const m2_op = useTransform(smoothProgress, [0.25, 0.30, 0.44, 0.50], [0, 1, 1, 0]);
+  const m2_y  = useTransform(smoothProgress, [0.25, 0.30, 0.44, 0.50], [40, 0, 0, -30]);
 
   /* ═══════════════════════════════════════════════════════════════════════════
-     ACT 3 — THE REVEAL  (0.55 → 0.82)
+     ACT 3 — THE REVEAL  (0.48 → 0.72)
      Full render visible. Slow cinematic zoom. CTA + annotations appear.
   ═══════════════════════════════════════════════════════════════════════════ */
   // Annotations fade in
-  const annOp = useTransform(smoothProgress, [0.48, 0.56, 0.72, 0.80], [0, 1, 1, 0]);
+  const annOp = useTransform(smoothProgress, [0.40, 0.48, 0.64, 0.72], [0, 1, 1, 0]);
 
   /* ═══════════════════════════════════════════════════════════════════════════
-     ACT 4 — THE FINAL FRAME (0.70 → 1.0)
+     ACT 4 — THE FINAL FRAME (0.60 → 0.90)
      Blue overlay settles over the render. Selected Works spread appears & stays fixed.
   ═══════════════════════════════════════════════════════════════════════════ */
-  // Blue overlay - transitions to full opacity at 0.85 and stays solid through 1.0
-  const blueOverlayOp = useTransform(smoothProgress, [0.70, 0.85, 1.0], [0, 1.0, 1.0]);
+  // Blue overlay - transitions to full opacity faster by 0.75
+  const blueOverlayOp = useTransform(smoothProgress, [0.58, 0.75, 1.0], [0, 1.0, 1.0]);
 
-  // Selected Works spread - fades in by 0.85 and stays locked at opacity 1, y 0, scale 1 through 1.0
-  const ctaOp    = useTransform(smoothProgress, [0.72, 0.85, 1.0], [0, 1, 1]);
-  const ctaY     = useTransform(smoothProgress, [0.72, 0.85, 1.0], [30, 0, 0]);
-  const ctaScale = useTransform(smoothProgress, [0.72, 0.85, 1.0], [0.95, 1, 1]);
+  // Selected Works spread - fades in by 0.75 and stays locked at opacity 1, y 0, scale 1 through 1.0
+  const ctaOp    = useTransform(smoothProgress, [0.60, 0.75, 1.0], [0, 1, 1]);
+  const ctaY     = useTransform(smoothProgress, [0.60, 0.75, 1.0], [24, 0, 0]);
+  const ctaScale = useTransform(smoothProgress, [0.60, 0.75, 1.0], [0.96, 1, 1]);
 
   // Scroll cue — use raw progress so it hides immediately when user starts scrolling
   const cueOp = useTransform(scrollYProgress, [0, 0.035], [1, 0]);
@@ -294,9 +257,8 @@ export default function Home() {
             containerClass="absolute left-[4%] md:left-[7%] top-1/2 -translate-y-1/2 z-[10] pointer-events-none max-w-[260px] sm:max-w-[300px] md:max-w-[360px]"
             containerStyle={{ opacity: m1_op, y: m1_y }}
             scrollProgress={smoothProgress}
-            baseOffset={0.04}
-            stagger={0.014}
-            isMobile={isMobile}
+            baseOffset={0.02}
+            stagger={0.010}
           />
 
           {/* Manifesto 2 — Act 2 */}
@@ -305,9 +267,8 @@ export default function Home() {
             containerClass="absolute left-[4%] md:left-[7%] top-1/2 -translate-y-1/2 z-[10] pointer-events-none max-w-[260px] sm:max-w-[300px] md:max-w-[380px]"
             containerStyle={{ opacity: m2_op, y: m2_y }}
             scrollProgress={smoothProgress}
-            baseOffset={0.33}
-            stagger={0.014}
-            isMobile={isMobile}
+            baseOffset={0.22}
+            stagger={0.010}
           />
 
           {/* ═══════ ACT 4 — SELECTED WORKS FINAL SPREAD (CENTERED & FIXED BELOW NAVBAR) ═══════ */}
