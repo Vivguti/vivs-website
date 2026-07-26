@@ -1,4 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <rect width="64" height="64" rx="16" fill="#0f172a" />
-  <text x="32" y="42" font-family="'Cormorant Garamond', Georgia, serif" font-size="28" font-weight="bold" fill="#ffffff" text-anchor="middle" letter-spacing="1">VG</text>
+  <!-- Outer glowing circle -->
+  <circle cx="32" cy="32" r="30" fill="#0f172a" stroke="rgba(255, 255, 255, 0.7)" stroke-width="2.5" />
+  <!-- Inner accent ring -->
+  <circle cx="32" cy="32" r="27" fill="none" stroke="rgba(255, 255, 255, 0.2)" stroke-width="1" />
+  <!-- Centered VG Initials -->
+  <text x="32" y="42" font-family="'Cormorant Garamond', Georgia, serif" font-size="26" font-weight="700" fill="#ffffff" text-anchor="middle" letter-spacing="1.5">VG</text>
 </svg>

@@ -77,14 +77,21 @@ export default function About() {
                   {['Rhino', 'Sketchup', 'AutoCAD', 'Revit'].map((skill, i) => (
                     <motion.div
                       key={skill}
-                      initial={{ opacity: 0, x: -30 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: false, margin: "-50px" }}
-                      transition={{ delay: i * 0.1, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                      initial={{ opacity: 0, x: -40, scale: 0.95 }}
+                      whileInView={{ opacity: 1, x: 0, scale: 1 }}
+                      whileHover={{ x: 6, scale: 1.02 }}
+                      viewport={{ once: false, amount: 0.2 }}
+                      transition={{ delay: i * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                       className="bg-white/20 hover:bg-white/35 border border-white/35 backdrop-blur-[50px] w-full py-4 px-6 rounded-xl flex items-center justify-between transition-all duration-300 cursor-default group shadow-sm"
                     >
                       <span className="font-display text-2xl text-white font-bold group-hover:text-white transition-colors text-shadow-subtle">{skill}</span>
-                      <div className="h-px w-12 bg-white/60 group-hover:bg-white group-hover:w-20 transition-all duration-300" />
+                      <motion.div 
+                        initial={{ width: "16px", opacity: 0.4 }}
+                        whileInView={{ width: "48px", opacity: 0.9 }}
+                        viewport={{ once: false }}
+                        transition={{ delay: i * 0.1 + 0.15, duration: 0.5 }}
+                        className="h-px bg-white/70 group-hover:bg-white group-hover:w-20 transition-all duration-300"
+                      />
                     </motion.div>
                   ))}
                 </div>
@@ -97,14 +104,21 @@ export default function About() {
                   {['Photoshop', 'Illustrator', 'Adobe InDesign'].map((skill, i) => (
                     <motion.div
                       key={skill}
-                      initial={{ opacity: 0, x: -30 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: false, margin: "-50px" }}
-                      transition={{ delay: i * 0.1, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                      initial={{ opacity: 0, x: -40, scale: 0.95 }}
+                      whileInView={{ opacity: 1, x: 0, scale: 1 }}
+                      whileHover={{ x: 6, scale: 1.02 }}
+                      viewport={{ once: false, amount: 0.2 }}
+                      transition={{ delay: i * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                       className="bg-white/20 hover:bg-white/35 border border-white/35 backdrop-blur-[50px] w-full py-4 px-6 rounded-xl flex items-center justify-between transition-all duration-300 cursor-default group shadow-sm"
                     >
                       <span className="font-display text-2xl text-white font-bold group-hover:text-white transition-colors text-shadow-subtle">{skill}</span>
-                      <div className="h-px w-12 bg-white/60 group-hover:bg-white group-hover:w-20 transition-all duration-300" />
+                      <motion.div 
+                        initial={{ width: "16px", opacity: 0.4 }}
+                        whileInView={{ width: "48px", opacity: 0.9 }}
+                        viewport={{ once: false }}
+                        transition={{ delay: i * 0.1 + 0.15, duration: 0.5 }}
+                        className="h-px bg-white/70 group-hover:bg-white group-hover:w-20 transition-all duration-300"
+                      />
                     </motion.div>
                   ))}
                 </div>
@@ -117,14 +131,21 @@ export default function About() {
                   {['Google Antigravity', 'Claude AI', 'Figma'].map((skill, i) => (
                     <motion.div
                       key={skill}
-                      initial={{ opacity: 0, x: -30 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: false, margin: "-50px" }}
-                      transition={{ delay: i * 0.1, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                      initial={{ opacity: 0, x: -40, scale: 0.95 }}
+                      whileInView={{ opacity: 1, x: 0, scale: 1 }}
+                      whileHover={{ x: 6, scale: 1.02 }}
+                      viewport={{ once: false, amount: 0.2 }}
+                      transition={{ delay: i * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                       className="bg-white/20 hover:bg-white/35 border border-white/35 backdrop-blur-[50px] w-full py-4 px-6 rounded-xl flex items-center justify-between transition-all duration-300 cursor-default group shadow-sm"
                     >
                       <span className="font-display text-2xl text-white font-bold group-hover:text-white transition-colors text-shadow-subtle">{skill}</span>
-                      <div className="h-px w-12 bg-white/60 group-hover:bg-white group-hover:w-20 transition-all duration-300" />
+                      <motion.div 
+                        initial={{ width: "16px", opacity: 0.4 }}
+                        whileInView={{ width: "48px", opacity: 0.9 }}
+                        viewport={{ once: false }}
+                        transition={{ delay: i * 0.1 + 0.15, duration: 0.5 }}
+                        className="h-px bg-white/70 group-hover:bg-white group-hover:w-20 transition-all duration-300"
+                      />
                     </motion.div>
                   ))}
                 </div>
