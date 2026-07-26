@@ -153,27 +153,27 @@ export default function Home() {
   const annOp = useTransform(smoothProgress, [0.40, 0.48, 0.64, 0.72], [0, 1, 1, 0]);
 
   /* ═══════════════════════════════════════════════════════════════════════════
-     ACT 4 — THE FINAL FRAME (0.60 → 0.90)
-     Blue overlay settles over the render. Selected Works spread appears & stays fixed.
+     ACT 4 — THE FINAL FRAME (0.55 → 1.0)
+     Blue overlay settles over the render. Selected Works spread appears, centers & stays fixed.
   ═══════════════════════════════════════════════════════════════════════════ */
-  // Blue overlay - transitions to full opacity faster by 0.75
-  const blueOverlayOp = useTransform(smoothProgress, [0.58, 0.75, 1.0], [0, 1.0, 1.0]);
+  // Blue overlay - transitions to full opacity by 0.70 and stays solid through 1.0
+  const blueOverlayOp = useTransform(smoothProgress, [0.55, 0.70, 1.0], [0, 1.0, 1.0]);
 
-  // Selected Works spread - fades in by 0.75 and stays locked at opacity 1, y 0, scale 1 through 1.0
-  const ctaOp    = useTransform(smoothProgress, [0.60, 0.75, 1.0], [0, 1, 1]);
-  const ctaY     = useTransform(smoothProgress, [0.60, 0.75, 1.0], [24, 0, 0]);
-  const ctaScale = useTransform(smoothProgress, [0.60, 0.75, 1.0], [0.96, 1, 1]);
+  // Selected Works spread - fades in by 0.70 and stays locked centered at opacity 1, y 0, scale 1 through 1.0
+  const ctaOp    = useTransform(smoothProgress, [0.55, 0.70, 1.0], [0, 1, 1]);
+  const ctaY     = useTransform(smoothProgress, [0.55, 0.70, 1.0], [20, 0, 0]);
+  const ctaScale = useTransform(smoothProgress, [0.55, 0.70, 1.0], [0.97, 1, 1]);
 
   // Scroll cue — use raw progress so it hides immediately when user starts scrolling
   const cueOp = useTransform(scrollYProgress, [0, 0.035], [1, 0]);
 
   // Progress bar visibility — raw progress so it's always in sync with real scroll
-  const progressVis = useTransform(scrollYProgress, [0, 0.05, 0.85, 1.0], [0, 1, 1, 1]);
+  const progressVis = useTransform(scrollYProgress, [0, 0.05, 0.70, 1.0], [0, 1, 1, 1]);
 
   // Background tone shift
   const bgColor = useTransform(
     smoothProgress,
-    [0, 0.25, 0.50, 0.80, 1.0],
+    [0, 0.25, 0.50, 0.70, 1.0],
     ['#93A3B9', '#8A9BB3', '#7B8FA6', '#6E8298', '#93A3B9']
   );
 
@@ -214,8 +214,8 @@ export default function Home() {
           <motion.div
             className="absolute inset-0 z-[2] transform-gpu"
             style={{
-              scale: bp_scale,
-              y: bp_y,
+              scale: isMobile ? 1 : bp_scale,
+              y: isMobile ? 0 : bp_y,
               opacity: bp_fadeout,
               willChange: 'transform, opacity',
             }}
@@ -225,20 +225,19 @@ export default function Home() {
               alt="Architectural Section — Blueprint"
               className="hero-section-img w-full h-full object-cover object-center transform-gpu"
               style={{
-                filter: bp_filter,
-                willChange: 'filter, transform',
+                filter: isMobile ? 'none' : bp_filter,
               }}
             />
           </motion.div>
 
-          {/* Render Layer — reveals via clip-path wipe */}
+          {/* Render Layer — reveals via clip-path wipe on desktop, smooth GPU opacity blend on mobile */}
           <motion.div
             className="absolute inset-0 z-[3] transform-gpu"
             style={{
               opacity: rn_opacity,
-              scale: rn_scale,
-              y: rn_y,
-              clipPath: renderClip,
+              scale: isMobile ? 1 : rn_scale,
+              y: isMobile ? 0 : rn_y,
+              clipPath: isMobile ? undefined : renderClip,
               willChange: 'transform, opacity, clip-path',
             }}
           >
@@ -280,9 +279,9 @@ export default function Home() {
             stagger={0.010}
           />
 
-          {/* ═══════ ACT 4 — SELECTED WORKS FINAL SPREAD (CENTERED & FIXED BELOW NAVBAR) ═══════ */}
+          {/* ═══════ ACT 4 — SELECTED WORKS FINAL SPREAD (CENTERED & LOCKED AT DESTINATION) ═══════ */}
           <motion.div
-            className="absolute inset-0 z-[12] flex flex-col justify-center items-center pt-20 md:pt-32 pb-8 px-4 md:px-12 text-center overflow-y-auto"
+            className="absolute inset-0 z-[12] flex flex-col justify-center items-center my-auto pt-24 md:pt-32 pb-10 px-5 md:px-12 text-center overflow-y-auto pointer-events-auto"
             style={{ opacity: ctaOp, y: ctaY, scale: ctaScale }}
           >
             <div className="max-w-4xl mx-auto flex flex-col items-center mb-6 md:mb-8 shrink-0">
