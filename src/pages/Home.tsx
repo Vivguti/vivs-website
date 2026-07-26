@@ -22,9 +22,9 @@ function ManifestoWord({
   baseOffset: number; stagger: number;
 }) {
   const start = baseOffset + index * stagger;
-  const end = start + 0.022;
+  const end = start + 0.030;
   const opacity = useTransform(scrollProgress, [start, end], [0, 1]);
-  const y = useTransform(scrollProgress, [start, end], [18, 0]);
+  const y = useTransform(scrollProgress, [start, end], [16, 0]);
 
   return (
     <motion.span className="inline-block mr-[0.3em] transform-gpu" style={{ opacity, y }}>
@@ -92,13 +92,13 @@ export default function Home() {
     offset: ['start start', 'end end'],
   });
 
-  // Fast, ultra-responsive spring interpolation — high stiffness and lighter mass
-  // so mobile touch scrolling drives the original hero animation instantly and smoothly.
+  // Critically-damped spring interpolation (damping 35, stiffness 70, restDelta 0.001)
+  // Ensures ZERO spring oscillation or vibration during slow scrolling on mobile or desktop.
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: isMobile ? 180 : 120,
-    damping: isMobile ? 24 : 22,
-    mass: isMobile ? 0.5 : 1,
-    restDelta: 0.0001,
+    stiffness: 70,
+    damping: 35,
+    mass: 1,
+    restDelta: 0.001,
   });
 
   /* ═══════════════════════════════════════════════════════════════════════════
