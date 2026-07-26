@@ -173,11 +173,90 @@ export default function Home() {
 
   return (
     <>
-      {/* ████  HERO — 700vh scroll canvas  ████ */}
+      {/* 📱 MOBILE VIEW (< md): Native document scroll matching About page liquid-smooth flow */}
+      <div className="block md:hidden relative min-h-screen bg-fixed bg-cover bg-center" style={{ backgroundImage: "url('/hero-render.jpg')" }}>
+        <div className="absolute inset-0 bg-[#0f172a]/55" />
+        
+        <div className="relative z-10 pt-28 pb-20 px-5 flex flex-col gap-10 max-w-lg mx-auto">
+          {/* Manifesto 1 Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-30px" }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="about-glass-panel rounded-3xl p-6 shadow-xl backdrop-blur-[50px]"
+          >
+            <div className="hero-manifesto text-[24px] leading-snug text-white text-shadow-subtle">
+              {MANIFESTO_1.join(' ')}
+            </div>
+          </motion.div>
+
+          {/* Manifesto 2 Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-30px" }}
+            transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="about-glass-panel rounded-3xl p-6 shadow-xl backdrop-blur-[50px]"
+          >
+            <div className="hero-manifesto text-[24px] leading-snug text-white text-shadow-subtle">
+              {MANIFESTO_2.join(' ')}
+            </div>
+          </motion.div>
+
+          {/* Selected Works Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-30px" }}
+            transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className="about-glass-panel rounded-3xl p-6 shadow-xl text-center flex flex-col items-center gap-6 backdrop-blur-[50px]"
+          >
+            <div>
+              <span className="font-body text-xs tracking-[0.3em] uppercase text-white/80 block mb-2 text-shadow-subtle">Portfolio Collection</span>
+              <h2 className="font-display text-4xl text-white font-bold text-shadow-subtle">Selected Works</h2>
+              <p className="font-body text-white text-sm mt-3 leading-relaxed font-medium text-shadow-subtle">
+                A curated selection of architectural interventions, spatial explorations, and structural designs.
+              </p>
+            </div>
+
+            <Link to="/portfolio" className="cta-explore shadow-2xl">
+              <span>Explore My Work</span>
+              <span className="cta-arrow !w-9 !h-9">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 16 16 12 12 8" />
+                  <line x1="8" y1="12" x2="16" y2="12" />
+                </svg>
+              </span>
+            </Link>
+
+            <div className="w-full flex flex-col gap-4 text-left pt-2">
+              <Link to="/project/living-infrastructure" className="group bg-white/20 hover:bg-white/35 border border-white/35 rounded-2xl overflow-hidden p-3.5 transition-all">
+                <div className="w-full h-36 rounded-xl overflow-hidden mb-3">
+                  <img src="/living-infrastructure-board.png" alt="Living Infrastructure" className="w-full h-full object-cover object-top" />
+                </div>
+                <span className="font-body text-[10px] tracking-[0.2em] uppercase text-white/80 block mb-1 text-shadow-subtle">01 / Urban Community</span>
+                <h3 className="font-display text-xl text-white font-bold text-shadow-subtle">Living Infrastructure</h3>
+              </Link>
+
+              <Link to="/portfolio" className="group bg-white/20 hover:bg-white/35 border border-white/35 rounded-2xl overflow-hidden p-3.5 transition-all">
+                <div className="w-full h-36 rounded-xl overflow-hidden mb-3">
+                  <img src="/prismatic-infill-board-full.png" alt="Prismatic Infill" className="w-full h-full object-cover object-top" />
+                </div>
+                <span className="font-body text-[10px] tracking-[0.2em] uppercase text-white/80 block mb-1 text-shadow-subtle">02 / Residential</span>
+                <h3 className="font-display text-xl text-white font-bold text-shadow-subtle">Prismatic Infill</h3>
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* 💻 DESKTOP VIEW (>= md): 700vh interactive sticky walkthrough */}
       <section
         ref={heroRef}
         aria-label="Portfolio hero"
-        className="relative w-full hero-scroll-container"
+        className="hidden md:block relative w-full hero-scroll-container"
         style={{ height: '700vh' }}
       >
         <motion.div
