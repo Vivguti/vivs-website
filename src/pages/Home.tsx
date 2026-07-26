@@ -22,9 +22,9 @@ function ManifestoWord({
   baseOffset: number; stagger: number;
 }) {
   const start = baseOffset + index * stagger;
-  const end = start + 0.030;
+  const end = start + 0.055;
   const opacity = useTransform(scrollProgress, [start, end], [0, 1]);
-  const y = useTransform(scrollProgress, [start, end], [16, 0]);
+  const y = useTransform(scrollProgress, [start, end], [14, 0]);
 
   return (
     <motion.span className="inline-block mr-[0.3em] transform-gpu" style={{ opacity, y }}>
@@ -266,7 +266,7 @@ export default function Home() {
             containerStyle={{ opacity: m1_op, y: m1_y }}
             scrollProgress={smoothProgress}
             baseOffset={0.02}
-            stagger={0.010}
+            stagger={0.018}
           />
 
           {/* Manifesto 2 — Act 2 */}
@@ -276,7 +276,7 @@ export default function Home() {
             containerStyle={{ opacity: m2_op, y: m2_y }}
             scrollProgress={smoothProgress}
             baseOffset={0.22}
-            stagger={0.010}
+            stagger={0.018}
           />
 
           {/* ═══════ ACT 4 — SELECTED WORKS FINAL SPREAD (CENTERED & LOCKED AT DESTINATION) ═══════ */}
