@@ -240,11 +240,12 @@ export default function Home() {
 
           {/* Blueprint Layer — full page cover */}
           <motion.div
-            className="absolute inset-0 z-[2]"
+            className="absolute inset-0 z-[2] transform-gpu"
             style={{
               scale: isMobile ? 1 : bp_scale,
               y: isMobile ? 0 : bp_y,
               opacity: bp_fadeout,
+              willChange: 'opacity, transform',
             }}
           >
             <motion.img
@@ -252,19 +253,20 @@ export default function Home() {
               alt="Architectural Section — Blueprint"
               className="hero-section-img w-full h-full object-cover object-center"
               style={{
-                filter: bp_filter,
+                filter: isMobile ? 'brightness(1.0) contrast(1.05)' : bp_filter,
               }}
             />
           </motion.div>
 
           {/* Render Layer — reveals via clip-path wipe */}
           <motion.div
-            className="absolute inset-0 z-[3]"
+            className="absolute inset-0 z-[3] transform-gpu"
             style={{
               opacity: rn_opacity,
               scale: isMobile ? 1 : rn_scale,
               y: isMobile ? 0 : rn_y,
-              clipPath: renderClip,
+              clipPath: isMobile ? undefined : renderClip,
+              willChange: 'opacity, transform',
             }}
           >
             <img
