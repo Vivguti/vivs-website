@@ -242,8 +242,8 @@ export default function Home() {
           <motion.div
             className="absolute inset-0 z-[2]"
             style={{
-              scale: bp_scale,
-              y: bp_y,
+              scale: isMobile ? 1 : bp_scale,
+              y: isMobile ? 0 : bp_y,
               opacity: bp_fadeout,
             }}
           >
@@ -262,8 +262,8 @@ export default function Home() {
             className="absolute inset-0 z-[3]"
             style={{
               opacity: rn_opacity,
-              scale: rn_scale,
-              y: rn_y,
+              scale: isMobile ? 1 : rn_scale,
+              y: isMobile ? 0 : rn_y,
               clipPath: renderClip,
             }}
           >
