@@ -240,37 +240,40 @@ export default function Home() {
 
           {/* Blueprint Layer — full page cover */}
           <motion.div
-            className="absolute inset-0 z-[2]"
+            className="absolute inset-0 z-[2] transform-gpu"
             style={{
-              scale: isMobile ? 1 : bp_scale,
-              y: isMobile ? 0 : bp_y,
-              opacity: isMobile ? 0 : bp_fadeout,
+              scale: bp_scale,
+              y: bp_y,
+              opacity: bp_fadeout,
+              willChange: 'transform, opacity',
             }}
           >
             <motion.img
               src="/hero-blueprint.jpg"
               alt="Architectural Section — Blueprint"
-              className="hero-section-img w-full h-full object-cover object-center"
+              className="hero-section-img w-full h-full object-cover object-center transform-gpu"
               style={{
-                filter: isMobile ? 'none' : bp_filter,
+                filter: bp_filter,
+                willChange: 'filter, transform',
               }}
             />
           </motion.div>
 
-          {/* Render Layer — stationary background on mobile */}
+          {/* Render Layer — reveals via clip-path wipe */}
           <motion.div
-            className="absolute inset-0 z-[3]"
+            className="absolute inset-0 z-[3] transform-gpu"
             style={{
-              opacity: isMobile ? 1 : rn_opacity,
-              scale: isMobile ? 1 : rn_scale,
-              y: isMobile ? 0 : rn_y,
-              clipPath: isMobile ? undefined : renderClip,
+              opacity: rn_opacity,
+              scale: rn_scale,
+              y: rn_y,
+              clipPath: renderClip,
+              willChange: 'transform, opacity, clip-path',
             }}
           >
             <img
               src="/hero-render.jpg"
               alt="Architectural Section — Full Render"
-              className="hero-section-img w-full h-full object-cover object-center"
+              className="hero-section-img w-full h-full object-cover object-center transform-gpu"
             />
           </motion.div>
 
