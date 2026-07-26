@@ -135,12 +135,12 @@ export default function Home() {
       <section
         ref={heroRef}
         aria-label="Portfolio hero"
-        className="relative w-full"
+        className="relative w-full hero-scroll-container"
         style={{ height: '700vh' }}
       >
         <motion.div
           className="sticky top-0 w-full h-screen overflow-hidden"
-          style={{ backgroundColor: bgColor }}
+          style={{ backgroundColor: bgColor, willChange: 'background-color' }}
         >
           {/* ── Architectural Grid ── */}
           <motion.div

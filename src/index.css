@@ -330,9 +330,6 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: 
-    drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25)) 
-    drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
   pointer-events: none;
 }
 
@@ -368,10 +365,10 @@
 /* All rules below use @media max-width so they NEVER affect desktop styles     */
 
 @media (max-width: 767px) {
-  /* Prevent any horizontal overflow / scroll caused by oversized elements */
-  body,
-  #root {
-    overflow-x: hidden;
+  /* Prevent horizontal overflow without touching body overflow (which would break
+     position:sticky and useScroll on iOS Safari).                              */
+  main {
+    overflow-x: clip;
   }
 
   /* Hide the scroll progress sidebar track — too narrow to be useful on mobile */
@@ -400,8 +397,17 @@
     letter-spacing: -0.01em;
   }
 
-  /* Make the about page background attachment fixed work on iOS (fallback) */
+  /* iOS Safari: background-attachment:fixed causes blurry repaints on scroll.
+     Swap to scroll so the background is composited normally on mobile.          */
   .bg-fixed {
     background-attachment: scroll;
+  }
+
+  /* Ensure the hero sticky container scrolls properly on mobile browsers.
+     touch-action:pan-y tells the browser only vertical touch pans are needed,
+     which prevents any gesture conflict with the scroll-linked animations.     */
+  .hero-scroll-container {
+    touch-action: pan-y;
+    -webkit-overflow-scrolling: touch;
   }
 }
