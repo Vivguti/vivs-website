@@ -1,5 +1,5 @@
-import { useRef, useEffect } from 'react';
-import { motion, useScroll, useTransform, useSpring, type MotionValue } from 'framer-motion';
+import { useRef, useEffect, useState } from 'react';
+import { motion, useScroll, useTransform, useSpring, type MotionValue, type MotionStyle } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import ScrollProgress from '../components/ScrollProgress';
 
@@ -14,7 +14,8 @@ const MANIFESTO_2 = [
   'a better', 'architect', 'than I was', 'yesterday.',
 ];
 
-// ─── Staggered word sub-component (hooks-safe) ─────────────────────────────────
+// ─── Desktop: per-word scroll-linked stagger ───────────────────────────────────
+// Each word fades + slides in as the user scrolls through its narrow window.
 function ManifestoWord({
   word, index, scrollProgress, baseOffset, stagger,
 }: {
@@ -33,6 +34,66 @@ function ManifestoWord({
   );
 }
 
+// ─── Mobile: time-based stagger, no scroll-linked transforms per word ──────────
+// The CONTAINER's spring-animated opacity/y handles the entrance; words just
+// appear with a simple CSS transition so there's nothing choppy to track.
+function ManifestoWordMobile({ word, index }: { word: string; index: number }) {
+  return (
+    <motion.span
+      className="inline-block mr-[0.3em]"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{
+        delay: 0.05 + index * 0.06,
+        duration: 0.55,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+    >
+      {word}
+    </motion.span>
+  );
+}
+
+// ─── Unified manifesto block — picks rendering strategy by platform ────────────
+function ManifestoBlock({
+  words,
+  containerStyle,
+  containerClass,
+  scrollProgress,
+  baseOffset,
+  stagger,
+  isMobile,
+}: {
+  words: string[];
+  containerStyle: MotionStyle;
+  containerClass: string;
+  scrollProgress: MotionValue<number>;
+  baseOffset: number;
+  stagger: number;
+  isMobile: boolean;
+}) {
+  return (
+    <motion.div className={containerClass} style={containerStyle}>
+      <div className="hero-manifesto text-[22px] sm:text-[28px] md:text-[38px] lg:text-[46px] leading-[1.0]">
+        {words.map((word, i) =>
+          isMobile ? (
+            <ManifestoWordMobile key={`${word}-${i}`} word={word} index={i} />
+          ) : (
+            <ManifestoWord
+              key={`${word}-${i}`}
+              word={word}
+              index={i}
+              scrollProgress={scrollProgress}
+              baseOffset={baseOffset}
+              stagger={stagger}
+            />
+          )
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
 // ─── Main Component ────────────────────────────────────────────────────────────
 export default function Home() {
   const heroRef = useRef<HTMLElement>(null);
@@ -43,6 +104,15 @@ export default function Home() {
       window.history.scrollRestoration = 'manual';
     }
     window.scrollTo(0, 0);
+  }, []);
+
+  // Detect mobile to choose the right word animation strategy.
+  // (Must be a state/effect, not a conditional hook, to respect Rules of Hooks.)
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
   }, []);
 
   const { scrollYProgress } = useScroll({
@@ -216,42 +286,26 @@ export default function Home() {
           {/* ═══════ TYPOGRAPHY ═══════ */}
 
           {/* Manifesto 1 — Act 1 */}
-          <motion.div
-            className="absolute left-[4%] md:left-[7%] top-1/2 -translate-y-1/2 z-[10] pointer-events-none max-w-[260px] sm:max-w-[300px] md:max-w-[360px]"
-            style={{ opacity: m1_op, y: m1_y }}
-          >
-            <div className="hero-manifesto text-[22px] sm:text-[28px] md:text-[38px] lg:text-[46px] leading-[1.0]">
-              {MANIFESTO_1.map((word, i) => (
-                <ManifestoWord
-                  key={`m1-${i}`}
-                  word={word}
-                  index={i}
-                  scrollProgress={smoothProgress}
-                  baseOffset={0.04}
-                  stagger={0.014}
-                />
-              ))}
-            </div>
-          </motion.div>
+          <ManifestoBlock
+            words={MANIFESTO_1}
+            containerClass="absolute left-[4%] md:left-[7%] top-1/2 -translate-y-1/2 z-[10] pointer-events-none max-w-[260px] sm:max-w-[300px] md:max-w-[360px]"
+            containerStyle={{ opacity: m1_op, y: m1_y }}
+            scrollProgress={smoothProgress}
+            baseOffset={0.04}
+            stagger={0.014}
+            isMobile={isMobile}
+          />
 
           {/* Manifesto 2 — Act 2 */}
-          <motion.div
-            className="absolute left-[4%] md:left-[7%] top-1/2 -translate-y-1/2 z-[10] pointer-events-none max-w-[260px] sm:max-w-[300px] md:max-w-[380px]"
-            style={{ opacity: m2_op, y: m2_y }}
-          >
-            <div className="hero-manifesto text-[22px] sm:text-[28px] md:text-[38px] lg:text-[46px] leading-[1.0]">
-              {MANIFESTO_2.map((word, i) => (
-                <ManifestoWord
-                  key={`m2-${i}`}
-                  word={word}
-                  index={i}
-                  scrollProgress={smoothProgress}
-                  baseOffset={0.33}
-                  stagger={0.014}
-                />
-              ))}
-            </div>
-          </motion.div>
+          <ManifestoBlock
+            words={MANIFESTO_2}
+            containerClass="absolute left-[4%] md:left-[7%] top-1/2 -translate-y-1/2 z-[10] pointer-events-none max-w-[260px] sm:max-w-[300px] md:max-w-[380px]"
+            containerStyle={{ opacity: m2_op, y: m2_y }}
+            scrollProgress={smoothProgress}
+            baseOffset={0.33}
+            stagger={0.014}
+            isMobile={isMobile}
+          />
 
           {/* ═══════ ACT 4 — SELECTED WORKS FINAL SPREAD (CENTERED & FIXED BELOW NAVBAR) ═══════ */}
           <motion.div
