@@ -15,11 +15,11 @@ export default function Navbar() {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-      className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-4xl"
+      className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] md:w-[90%] max-w-4xl"
     >
-      <div className="glass-nav rounded-full px-6 py-3" style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center' }}>
+      <div className="glass-nav rounded-full px-3 md:px-6 py-2.5 md:py-3" style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center' }}>
         {/* VG Monogram Logo */}
-        <Link to="/" className="monogram-coin" aria-label="Home">
+        <Link to="/" className="monogram-coin !w-10 !h-10 md:!w-[54px] md:!h-[54px]" aria-label="Home">
           <div className="coin-inner">
             {/* Front face */}
             <div className="coin-face coin-front">
@@ -41,14 +41,14 @@ export default function Navbar() {
         </Link>
 
         {/* Centered Nav Links */}
-        <div className="flex items-center justify-center gap-16">
+        <div className="flex items-center justify-center gap-5 md:gap-16">
           {navLinks.map((link) => {
             const isActive = location.pathname === link.path;
             return (
               <Link
                 key={link.name}
                 to={link.path}
-                className="relative text-[13px] font-semibold tracking-widest uppercase text-gray-800 hover:text-black transition-colors"
+                className="relative text-[11px] md:text-[13px] font-semibold tracking-[0.1em] md:tracking-widest uppercase text-gray-800 hover:text-black transition-colors"
               >
                 {link.name}
                 {isActive && (
@@ -66,7 +66,7 @@ export default function Navbar() {
         {/* Contact Button */}
         <Link
           to="/contact"
-          className="px-6 py-2.5 rounded-full bg-[#93A3B9] text-white text-xs font-semibold tracking-widest uppercase border border-white/30 hover:bg-[#8093AC] hover:scale-105 active:scale-95 transition-all duration-300 shadow-sm hover:shadow-md justify-self-end"
+          className="px-3 md:px-6 py-2 md:py-2.5 rounded-full bg-[#93A3B9] text-white text-[10px] md:text-xs font-semibold tracking-[0.1em] md:tracking-widest uppercase border border-white/30 hover:bg-[#8093AC] hover:scale-105 active:scale-95 transition-all duration-300 shadow-sm hover:shadow-md justify-self-end whitespace-nowrap"
         >
           Contact
         </Link>

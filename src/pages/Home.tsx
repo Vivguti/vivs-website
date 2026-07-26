@@ -208,10 +208,10 @@ export default function Home() {
 
           {/* Manifesto 1 — Act 1 */}
           <motion.div
-            className="absolute left-[5%] md:left-[7%] top-1/2 -translate-y-1/2 z-[10] pointer-events-none max-w-[300px] md:max-w-[360px]"
+            className="absolute left-[4%] md:left-[7%] top-1/2 -translate-y-1/2 z-[10] pointer-events-none max-w-[260px] sm:max-w-[300px] md:max-w-[360px]"
             style={{ opacity: m1_op, y: m1_y }}
           >
-            <div className="hero-manifesto text-[28px] md:text-[38px] lg:text-[46px] leading-[1.0]">
+            <div className="hero-manifesto text-[22px] sm:text-[28px] md:text-[38px] lg:text-[46px] leading-[1.0]">
               {MANIFESTO_1.map((word, i) => (
                 <ManifestoWord
                   key={`m1-${i}`}
@@ -227,10 +227,10 @@ export default function Home() {
 
           {/* Manifesto 2 — Act 2 */}
           <motion.div
-            className="absolute left-[5%] md:left-[7%] top-1/2 -translate-y-1/2 z-[10] pointer-events-none max-w-[300px] md:max-w-[380px]"
+            className="absolute left-[4%] md:left-[7%] top-1/2 -translate-y-1/2 z-[10] pointer-events-none max-w-[260px] sm:max-w-[300px] md:max-w-[380px]"
             style={{ opacity: m2_op, y: m2_y }}
           >
-            <div className="hero-manifesto text-[28px] md:text-[38px] lg:text-[46px] leading-[1.0]">
+            <div className="hero-manifesto text-[22px] sm:text-[28px] md:text-[38px] lg:text-[46px] leading-[1.0]">
               {MANIFESTO_2.map((word, i) => (
                 <ManifestoWord
                   key={`m2-${i}`}
@@ -246,7 +246,7 @@ export default function Home() {
 
           {/* ═══════ ACT 4 — SELECTED WORKS FINAL SPREAD (CENTERED & FIXED BELOW NAVBAR) ═══════ */}
           <motion.div
-            className="absolute inset-0 z-[12] flex flex-col justify-center items-center pt-28 md:pt-32 pb-8 px-6 md:px-12 text-center overflow-y-auto"
+            className="absolute inset-0 z-[12] flex flex-col justify-center items-center pt-20 md:pt-32 pb-8 px-4 md:px-12 text-center overflow-y-auto"
             style={{ opacity: ctaOp, y: ctaY, scale: ctaScale }}
           >
             <div className="max-w-4xl mx-auto flex flex-col items-center mb-6 md:mb-8 shrink-0">
@@ -260,8 +260,8 @@ export default function Home() {
               <div className="w-full flex justify-center">
                 <Link to="/portfolio" className="cta-explore shadow-2xl">
                   <span>Explore My Work</span>
-                  <span className="cta-arrow">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <span className="cta-arrow !w-9 !h-9 md:!w-14 md:!h-14">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="md:!w-8 md:!h-8">
                       <circle cx="12" cy="12" r="10" />
                       <polyline points="12 16 16 12 12 8" />
                       <line x1="8" y1="12" x2="16" y2="12" />

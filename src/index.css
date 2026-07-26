@@ -364,4 +364,44 @@
   }
 }
 
+/* ─── Mobile-Only Overrides (≤ 767px) ──────────────────────────────────────── */
+/* All rules below use @media max-width so they NEVER affect desktop styles     */
 
+@media (max-width: 767px) {
+  /* Prevent any horizontal overflow / scroll caused by oversized elements */
+  body,
+  #root {
+    overflow-x: hidden;
+  }
+
+  /* Hide the scroll progress sidebar track — too narrow to be useful on mobile */
+  .scroll-progress-track {
+    display: none;
+  }
+
+  /* Scale down the scroll phase labels too */
+  .scroll-phase-label {
+    display: none;
+  }
+
+  /* Shrink the CTA "Explore My Work" button on narrow screens */
+  .cta-explore {
+    padding: 10px 14px 10px 22px;
+    font-size: 11px;
+    gap: 12px;
+  }
+
+  .cta-explore:hover {
+    gap: 18px;
+  }
+
+  /* Prevent the manifesto from bleeding past the left margin */
+  .hero-manifesto {
+    letter-spacing: -0.01em;
+  }
+
+  /* Make the about page background attachment fixed work on iOS (fallback) */
+  .bg-fixed {
+    background-attachment: scroll;
+  }
+}

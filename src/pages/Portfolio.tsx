@@ -353,7 +353,7 @@ export default function Portfolio() {
         >
           Curated Collection · 2024 — 2026
         </motion.p>
-        <h1 className="font-display text-6xl md:text-8xl lg:text-9xl font-light tracking-tight text-white leading-none mb-8">
+        <h1 className="font-display text-4xl sm:text-6xl md:text-8xl lg:text-9xl font-light tracking-tight text-white leading-none mb-8">
           Studio<br />
           <span className="italic">Portfolio Works</span>
         </h1>
