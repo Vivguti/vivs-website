@@ -116,7 +116,8 @@
   text-transform: uppercase;
   line-height: 1.05;
   letter-spacing: -0.02em;
-  color: #1a1a1a;
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8), 0 8px 24px rgba(0, 0, 0, 0.6);
 }
 
 @keyframes grid-pulse {

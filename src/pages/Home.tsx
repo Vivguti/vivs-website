@@ -149,20 +149,18 @@ export default function Home() {
      ACT 3 — THE REVEAL  (0.48 → 0.72)
      Full render visible. Slow cinematic zoom. CTA + annotations appear.
   ═══════════════════════════════════════════════════════════════════════════ */
-  // Annotations fade in
-  const annOp = useTransform(smoothProgress, [0.40, 0.48, 0.64, 0.72], [0, 1, 1, 0]);
 
   /* ═══════════════════════════════════════════════════════════════════════════
-     ACT 4 — THE FINAL FRAME (0.55 → 1.0)
+     ACT 4 — THE FINAL FRAME
      Blue overlay settles over the render. Selected Works spread smoothly slides up into view.
   ═══════════════════════════════════════════════════════════════════════════ */
-  // Blue overlay - transitions to full opacity smoothly
-  const blueOverlayOp = useTransform(smoothProgress, [0.55, 0.80], [0, 1.0]);
+  // Blue overlay - transitions to full opacity right after the wipe finishes
+  const blueOverlayOp = useTransform(smoothProgress, [0.46, 0.70], [0, 1.0]);
 
-  // Selected Works spread - continuously slides up from the bottom to create a smooth, physical scroll feel
-  const ctaOp    = useTransform(smoothProgress, [0.60, 0.85], [0, 1]);
-  const ctaY     = useTransform(smoothProgress, [0.55, 0.95], ['40vh', '0vh']);
-  const ctaScale = useTransform(smoothProgress, [0.55, 0.95], [0.92, 1]);
+  // Selected Works spread - continuously slides up without any dead scrolling gap
+  const ctaOp    = useTransform(smoothProgress, [0.48, 0.80], [0, 1]);
+  const ctaY     = useTransform(smoothProgress, [0.46, 0.85], ['40vh', '0vh']);
+  const ctaScale = useTransform(smoothProgress, [0.46, 0.85], [0.92, 1]);
 
   // Scroll cue — use raw progress so it hides immediately when user starts scrolling
   const cueOp = useTransform(scrollYProgress, [0, 0.035], [1, 0]);
@@ -182,12 +180,12 @@ export default function Home() {
 
   return (
     <>
-      {/* ████  HERO — Interactive multi-act scroll canvas (400vh on mobile, 700vh on desktop)  ████ */}
+      {/* ████  HERO — Interactive multi-act scroll canvas (300vh on mobile, 450vh on desktop)  ████ */}
       <section
         ref={heroRef}
         aria-label="Portfolio hero"
         className="relative w-full hero-scroll-container"
-        style={{ height: isMobile ? '400vh' : '700vh' }}
+        style={{ height: isMobile ? '300vh' : '450vh' }}
       >
         <motion.div
           className="sticky top-0 w-full h-screen overflow-hidden transform-gpu"
@@ -242,7 +240,7 @@ export default function Home() {
             }}
           >
             <img
-              src="/hero-render.jpg"
+              src="/hero-render-4.png"
               alt="Architectural Section — Full Render"
               className="hero-section-img w-full h-full object-cover object-center transform-gpu"
             />
@@ -279,24 +277,19 @@ export default function Home() {
             stagger={0.018}
           />
 
-          {/* ═══════ ACT 4 — SELECTED WORKS FINAL SPREAD (CENTERED & LOCKED AT DESTINATION) ═══════ */}
           <motion.div
-            className="absolute inset-0 z-[12] flex flex-col justify-center items-center my-auto pt-24 md:pt-32 pb-10 px-5 md:px-12 text-center overflow-y-auto pointer-events-auto"
+            className="absolute inset-0 z-[12] flex flex-col justify-center items-center my-auto pt-20 pb-10 px-5 md:px-12 text-center pointer-events-auto"
             style={{ opacity: ctaOp, y: ctaY, scale: ctaScale }}
           >
-            <div className="max-w-4xl mx-auto flex flex-col items-center mb-6 md:mb-8 shrink-0">
-              <span className="font-body text-xs tracking-[0.3em] uppercase text-white/60 mb-2 md:mb-3">Portfolio Collection</span>
-              <h2 className="font-display text-4xl md:text-6xl lg:text-7xl text-white tracking-tight mb-3 md:mb-4">
-                Selected Works
+            <div className="max-w-4xl mx-auto flex flex-col items-center mb-8 shrink-0">
+              <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-white tracking-tight mb-4">
+                <span className="font-light">Selected</span> <span className="font-light italic">Works</span>
               </h2>
-              <p className="font-body text-white/80 tracking-wide text-xs md:text-sm max-w-lg mb-6 md:mb-8 leading-relaxed">
-                A curated selection of architectural interventions, spatial explorations, and structural designs.
-              </p>
-              <div className="w-full flex justify-center">
-                <Link to="/portfolio" className="cta-explore shadow-2xl">
-                  <span>Explore My Work</span>
-                  <span className="cta-arrow !w-9 !h-9 md:!w-14 md:!h-14">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="md:!w-8 md:!h-8">
+              <div className="w-full flex justify-center mt-2">
+                <Link to="/selected-works" className="cta-explore shadow-2xl py-3 px-6">
+                  <span className="text-sm">Explore My Work</span>
+                  <span className="cta-arrow !w-8 !h-8 md:!w-10 md:!h-10">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="md:!w-5 md:!h-5">
                       <circle cx="12" cy="12" r="10" />
                       <polyline points="12 16 16 12 12 8" />
                       <line x1="8" y1="12" x2="16" y2="12" />
@@ -306,44 +299,27 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Featured Project Previews Grid */}
-            <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 text-left shrink-0">
-              <Link to="/project/living-infrastructure" className="group glass-panel rounded-2xl overflow-hidden p-4 transition-all duration-500 hover:bg-white/20">
-                <div className="w-full h-36 md:h-44 rounded-xl overflow-hidden mb-3">
+            {/* Featured Project Previews Grid - Expanded to span the page */}
+            <div className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 text-left shrink-0">
+              <Link to="/project/living-infrastructure" className="group glass-panel rounded-3xl overflow-hidden p-5 md:p-8 transition-all duration-500 hover:bg-white/20">
+                <div className="w-full h-56 md:h-80 lg:h-96 rounded-2xl overflow-hidden mb-5">
                   <img src="/living-infrastructure-board.png" alt="Living Infrastructure" className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700" />
                 </div>
-                <span className="font-body text-[10px] tracking-[0.2em] uppercase text-white/60 block mb-1">01 / Urban Community</span>
-                <h3 className="font-display text-xl md:text-2xl text-white group-hover:text-white/90">Living Infrastructure</h3>
+                <span className="font-body text-[11px] md:text-sm tracking-[0.2em] uppercase text-white/60 block mb-2">01 / Urban Community</span>
+                <h3 className="font-display text-3xl md:text-4xl lg:text-5xl text-white group-hover:text-white/90">Living Infrastructure</h3>
               </Link>
 
-              <Link to="/portfolio" className="group glass-panel rounded-2xl overflow-hidden p-4 transition-all duration-500 hover:bg-white/20">
-                <div className="w-full h-36 md:h-44 rounded-xl overflow-hidden mb-3">
+              <Link to="/selected-works" className="group glass-panel rounded-3xl overflow-hidden p-5 md:p-8 transition-all duration-500 hover:bg-white/20">
+                <div className="w-full h-56 md:h-80 lg:h-96 rounded-2xl overflow-hidden mb-5">
                   <img src="/prismatic-infill-board-full.png" alt="Prismatic Infill" className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700" style={{ objectPosition: 'center 0%' }} />
                 </div>
-                <span className="font-body text-[10px] tracking-[0.2em] uppercase text-white/60 block mb-1">02 / Residential</span>
-                <h3 className="font-display text-xl md:text-2xl text-white group-hover:text-white/90">Prismatic Infill</h3>
+                <span className="font-body text-[11px] md:text-sm tracking-[0.2em] uppercase text-white/60 block mb-2">02 / Residential</span>
+                <h3 className="font-display text-3xl md:text-4xl lg:text-5xl text-white group-hover:text-white/90">Prismatic Infill</h3>
               </Link>
             </div>
           </motion.div>
 
-          {/* ═══════ ANNOTATIONS — Act 3 ═══════ */}
-          <motion.div
-            className="absolute inset-0 z-[6] pointer-events-none hidden lg:block"
-            style={{ opacity: annOp }}
-          >
-            {[
-              { label: 'Rooftop Garden', t: '14%', l: '58%' },
-              { label: 'Bedroom Suite',  t: '30%', l: '68%' },
-              { label: 'Home Office',    t: '50%', l: '64%' },
-              { label: 'Kitchen',        t: '75%', l: '60%' },
-            ].map((a) => (
-              <div key={a.label} className="arch-annotation" style={{ top: a.t, left: a.l }}>
-                <div className="marker" />
-                <div className="leader" />
-                <span className="label">{a.label}</span>
-              </div>
-            ))}
-          </motion.div>
+          {/* ═══════ ANNOTATIONS — Act 3 (Removed) ═══════ */}
 
           {/* ═══════ BLUE OVERLAY — Act 4 ═══════ */}
           <motion.div

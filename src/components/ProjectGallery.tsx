@@ -114,7 +114,7 @@ export default function ProjectGallery() {
             </h2>
           </div>
           <button
-            onClick={() => navigate('/portfolio')}
+            onClick={() => navigate('/selected-works')}
             className="flex items-center gap-4 group/cta cursor-pointer"
           >
             <span className="font-body text-[11px] tracking-[0.18em] uppercase font-semibold text-white/80 group-hover/cta:text-white transition-colors">
@@ -319,7 +319,7 @@ export default function ProjectGallery() {
             <h4 className="font-display text-2xl text-white">Explore Archive</h4>
           </div>
           <button
-            onClick={() => navigate('/portfolio')}
+            onClick={() => navigate('/selected-works')}
             className="flex items-center gap-4 group/btn cursor-pointer mt-4 md:mt-0"
           >
             <span className="font-body text-[11px] tracking-[0.18em] uppercase font-semibold text-white/80">

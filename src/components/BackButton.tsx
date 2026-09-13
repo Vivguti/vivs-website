@@ -5,7 +5,7 @@ interface BackButtonProps {
   label?: string;
 }
 
-export default function BackButton({ to = '/portfolio', label = 'Back to Portfolio' }: BackButtonProps) {
+export default function BackButton({ to = '/selected-works', label = 'Back to Selected Works' }: BackButtonProps) {
   const navigate = useNavigate();
 
   return (

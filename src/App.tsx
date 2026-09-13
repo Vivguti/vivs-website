@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 
 // Global Components
@@ -9,6 +9,7 @@ import PageWrapper from './components/PageWrapper';
 // Pages
 import Home from './pages/Home';
 import About from './pages/About';
+import SelectedWorks from './pages/SelectedWorks';
 import Portfolio from './pages/Portfolio';
 import Contact from './pages/Contact';
 import LivingInfrastructure from './pages/LivingInfrastructure';
@@ -40,11 +41,17 @@ function AnimatedRoutes() {
           }
         />
         <Route
-          path="/portfolio"
+          path="/selected-works"
           element={
             <PageWrapper>
-              <Portfolio />
+              <SelectedWorks />
             </PageWrapper>
+          }
+        />
+        <Route
+          path="/portfolio"
+          element={
+            <Portfolio />
           }
         />
         <Route
@@ -54,6 +61,10 @@ function AnimatedRoutes() {
               <LivingInfrastructure />
             </PageWrapper>
           }
+        />
+        <Route
+          path="/flipbook"
+          element={<Navigate to="/portfolio" replace />}
         />
         <Route
           path="/contact"

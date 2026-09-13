@@ -5,7 +5,7 @@ export default function LivingInfrastructure() {
 
   return (
     <div className="min-h-screen bg-[#93A3B9] w-full relative">
-      <BackButton to="/portfolio" label="Back to Portfolio" />
+      <BackButton to="/selected-works" label="Back to Selected Works" />
       
       <motion.div 
         initial={{ opacity: 0 }}
