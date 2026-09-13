@@ -154,15 +154,15 @@ export default function Home() {
 
   /* ═══════════════════════════════════════════════════════════════════════════
      ACT 4 — THE FINAL FRAME (0.55 → 1.0)
-     Blue overlay settles over the render. Selected Works spread appears, centers & stays fixed.
+     Blue overlay settles over the render. Selected Works spread smoothly slides up into view.
   ═══════════════════════════════════════════════════════════════════════════ */
-  // Blue overlay - transitions to full opacity by 0.70 and stays solid through 1.0
-  const blueOverlayOp = useTransform(smoothProgress, [0.55, 0.70, 1.0], [0, 1.0, 1.0]);
+  // Blue overlay - transitions to full opacity smoothly
+  const blueOverlayOp = useTransform(smoothProgress, [0.55, 0.80], [0, 1.0]);
 
-  // Selected Works spread - fades in by 0.70 and stays locked centered at opacity 1, y 0, scale 1 through 1.0
-  const ctaOp    = useTransform(smoothProgress, [0.55, 0.70, 1.0], [0, 1, 1]);
-  const ctaY     = useTransform(smoothProgress, [0.55, 0.70, 1.0], [20, 0, 0]);
-  const ctaScale = useTransform(smoothProgress, [0.55, 0.70, 1.0], [0.97, 1, 1]);
+  // Selected Works spread - continuously slides up from the bottom to create a smooth, physical scroll feel
+  const ctaOp    = useTransform(smoothProgress, [0.60, 0.85], [0, 1]);
+  const ctaY     = useTransform(smoothProgress, [0.55, 0.95], ['40vh', '0vh']);
+  const ctaScale = useTransform(smoothProgress, [0.55, 0.95], [0.92, 1]);
 
   // Scroll cue — use raw progress so it hides immediately when user starts scrolling
   const cueOp = useTransform(scrollYProgress, [0, 0.035], [1, 0]);
