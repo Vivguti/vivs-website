@@ -1,4 +1,4 @@
-import { Grid, Maximize, Minimize, ZoomIn, ZoomOut } from 'lucide-react';
+import { Grid, Maximize, Minimize, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 
 interface FlipbookControlsProps {
   currentSpread: number;
@@ -9,6 +9,7 @@ interface FlipbookControlsProps {
   isFullscreen: boolean;
   onZoomIn: () => void;
   onZoomOut: () => void;
+  onZoomReset: () => void;
   zoom: number;
 }
 
@@ -21,6 +22,7 @@ export default function FlipbookControls({
   isFullscreen,
   onZoomIn,
   onZoomOut,
+  onZoomReset,
   zoom
 }: FlipbookControlsProps) {
   
@@ -40,6 +42,8 @@ export default function FlipbookControls({
       }
     }
   };
+
+  const isZoomed = zoom > 1;
 
   return (
     <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center gap-6 px-8 py-3 rounded-full bg-white/80 backdrop-blur-md shadow-lg border border-white/50">
@@ -62,9 +66,20 @@ export default function FlipbookControls({
       >
         <ZoomOut size={20} />
       </button>
+
+      {/* Reset button — only visible when zoomed */}
+      <button 
+        onClick={onZoomReset}
+        disabled={!isZoomed}
+        className={`text-gray-600 hover:text-black transition-all duration-200 ${isZoomed ? 'opacity-100 scale-100' : 'opacity-0 scale-75 pointer-events-none w-0 -mx-3'}`}
+        aria-label="Reset zoom and center"
+        title="Reset to center"
+      >
+        <RotateCcw size={18} />
+      </button>
       
       <span className="font-body text-xs font-semibold tracking-widest text-gray-700 tabular-nums">
-        {getPageCounter()}
+        {isZoomed ? `${Math.round(zoom * 100)}%` : getPageCounter()}
       </span>
       
       <button 

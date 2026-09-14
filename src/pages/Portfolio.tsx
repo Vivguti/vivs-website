@@ -156,6 +156,7 @@ export default function Portfolio() {
   // Prevent zooming out too far
   const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.5, 3));
   const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.5, 1));
+  const handleZoomReset = () => setZoom(1);
 
   return (
     <div 
@@ -221,6 +222,7 @@ export default function Portfolio() {
           isFullscreen={isFullscreen}
           onZoomIn={handleZoomIn}
           onZoomOut={handleZoomOut}
+          onZoomReset={handleZoomReset}
           zoom={zoom}
         />
       </div>
