@@ -80,8 +80,10 @@ export default function Portfolio() {
 
   const [isTransitioning, setIsTransitioning] = useState(false);
 
+  const isZoomed = zoom > 1;
+
   const goNext = () => {
-    if (isTransitioning) return;
+    if (isTransitioning || isZoomed) return;
     setIsTransitioning(true);
     setTimeout(() => setIsTransitioning(false), 500);
 
@@ -96,7 +98,7 @@ export default function Portfolio() {
   };
 
   const goPrev = () => {
-    if (isTransitioning) return;
+    if (isTransitioning || isZoomed) return;
     setIsTransitioning(true);
     setTimeout(() => setIsTransitioning(false), 500);
 
@@ -105,6 +107,14 @@ export default function Portfolio() {
   };
 
   const handleKeyDown = (e: KeyboardEvent) => {
+    if (isZoomed) {
+      // Only allow Escape to exit zoom while zoomed
+      if (e.key === 'Escape') {
+        setZoom(1);
+        setShowThumbnails(false);
+      }
+      return;
+    }
     if (e.key === 'ArrowRight') goNext();
     if (e.key === 'ArrowLeft') goPrev();
     if (e.key === 'Escape') {
@@ -181,11 +191,11 @@ export default function Portfolio() {
           }}
         />
         
-        {/* Navigation Overlays */}
+        {/* Navigation Overlays — hidden while zoomed */}
         <button 
           onClick={goPrev} 
           disabled={currentSpread === 0}
-          className={`absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-white/50 backdrop-blur hover:bg-white/80 disabled:opacity-0 transition-all duration-300 z-20 ${isIdle ? 'opacity-0' : 'opacity-100'}`}
+          className={`absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-white/50 backdrop-blur hover:bg-white/80 disabled:opacity-0 transition-all duration-300 z-20 ${isIdle || isZoomed ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
           aria-label="Previous page"
         >
           <ChevronLeft size={24} className="text-gray-800" />
@@ -193,7 +203,7 @@ export default function Portfolio() {
         
         <button 
           onClick={goNext} 
-          className={`absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-white/50 backdrop-blur hover:bg-white/80 transition-all duration-300 z-20 ${isIdle ? 'opacity-0' : 'opacity-100'}`}
+          className={`absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-white/50 backdrop-blur hover:bg-white/80 transition-all duration-300 z-20 ${isIdle || isZoomed ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
           aria-label="Next page"
         >
           <ChevronRight size={24} className="text-gray-800" />
