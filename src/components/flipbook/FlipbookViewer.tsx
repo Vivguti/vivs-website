@@ -62,9 +62,9 @@ export default function FlipbookViewer({
       const cw = containerRef.current!.clientWidth;
       const ch = containerRef.current!.clientHeight;
       
-      // If fullscreen, minimize padding so it fills the screen
-      const horizontalPadding = isFullscreen ? 16 : (isMobile ? 32 : 120);
-      const verticalPadding = isFullscreen ? 16 : (isMobile ? 120 : 160); 
+      // In fullscreen, use near-zero padding to maximize page size
+      const horizontalPadding = isFullscreen ? 8 : (isMobile ? 32 : 120);
+      const verticalPadding = isFullscreen ? 8 : (isMobile ? 120 : 160); 
       
       const maxAvailableWidth = cw - horizontalPadding;
       const maxAvailableHeight = ch - verticalPadding;
@@ -161,8 +161,8 @@ export default function FlipbookViewer({
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
         className="w-full h-full flex items-center justify-center transform-gpu"
         drag={zoom > 1}
-        dragConstraints={{ left: -500, right: 500, top: -500, bottom: 500 }}
-        dragElastic={0.1}
+        dragConstraints={false}
+        dragElastic={0.05}
       >
         {/* Instant cover placeholder — loads almost immediately from tiny 1-page PDF */}
         {!fullPdfLoaded && (
