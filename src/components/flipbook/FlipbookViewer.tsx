@@ -6,6 +6,8 @@ import { motion } from 'framer-motion';
 // @ts-ignore
 const FlipBook = HTMLFlipBook as any;
 
+const COVER_PDF_URL = "/portfolio/cover.pdf";
+
 interface FlipbookViewerProps {
   pdfUrl: string;
   isMobile: boolean;
@@ -25,7 +27,7 @@ const PageWrapper = forwardRef<HTMLDivElement, { pageNumber: number, width: numb
           width={width}
           renderTextLayer={false}
           renderAnnotationLayer={false}
-          devicePixelRatio={Math.max(window.devicePixelRatio || 1, 2)}
+          devicePixelRatio={Math.max(window.devicePixelRatio || 1, 3)}
           className="pointer-events-none"
         />
       </div>
@@ -46,6 +48,7 @@ export default function FlipbookViewer({
   
   const [error, setError] = useState<Error | null>(null);
   const [numPages, setNumPages] = useState<number>(0);
+  const [fullPdfLoaded, setFullPdfLoaded] = useState(false);
   const flipBookRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   
@@ -115,19 +118,33 @@ export default function FlipbookViewer({
     }
   }, [isResetting]);
 
-  const onDocumentLoadSuccess = async (pdf: any) => {
-    setNumPages(pdf.numPages);
-    onLoadSuccess({ numPages: pdf.numPages });
-
-    // Fetch the aspect ratio immediately from the PDF metadata without rendering
+  // Cover PDF loaded — get aspect ratio from it instantly
+  const onCoverLoadSuccess = async (pdf: any) => {
     try {
       const page = await pdf.getPage(1);
       const viewport = page.getViewport({ scale: 1 });
       setAspectRatio(viewport.width / viewport.height);
     } catch (e) {
-      console.error("Error fetching page aspect ratio:", e);
-      // Fallback aspect ratio (e.g., standard US Letter Portrait 8.5x11)
+      console.error("Error fetching cover aspect ratio:", e);
       setAspectRatio(8.5 / 11);
+    }
+  };
+
+  const onDocumentLoadSuccess = async (pdf: any) => {
+    setNumPages(pdf.numPages);
+    onLoadSuccess({ numPages: pdf.numPages });
+    setFullPdfLoaded(true);
+
+    // Also set aspect ratio from the full PDF if we don't have it yet
+    if (!aspectRatio) {
+      try {
+        const page = await pdf.getPage(1);
+        const viewport = page.getViewport({ scale: 1 });
+        setAspectRatio(viewport.width / viewport.height);
+      } catch (e) {
+        console.error("Error fetching page aspect ratio:", e);
+        setAspectRatio(8.5 / 11);
+      }
     }
   };
 
@@ -146,51 +163,82 @@ export default function FlipbookViewer({
         drag={zoom > 1}
         dragConstraints={{ left: -500, right: 500, top: -500, bottom: 500 }}
       >
-        <Document
-          file={pdfUrl}
-          onLoadSuccess={onDocumentLoadSuccess}
-          onLoadError={setError}
-          loading={<div className="text-gray-400 uppercase tracking-widest text-xs font-semibold">Loading HD Portfolio...</div>}
-        >
-          {numPages > 0 && (
-            <motion.div 
-              animate={{ opacity: isResetting || dimensions.width === 0 ? 0 : 1 }}
-              transition={{ duration: 0.4, ease: "easeInOut" }}
-              className="flex items-center justify-center w-full h-full"
-            >
-              {aspectRatio && dimensions.width > 0 && (
-                <FlipBook
-                  key={resetKey}
-                  ref={flipBookRef}
+        {/* Instant cover placeholder — loads almost immediately from tiny 1-page PDF */}
+        {!fullPdfLoaded && (
+          <Document
+            file={COVER_PDF_URL}
+            onLoadSuccess={onCoverLoadSuccess}
+            loading={<div className="text-gray-400 uppercase tracking-widest text-xs font-semibold">Loading Portfolio...</div>}
+          >
+            {aspectRatio && dimensions.width > 0 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+                className="flex items-center justify-center w-full h-full shadow-2xl"
+              >
+                <Page
+                  pageNumber={1}
                   width={dimensions.width}
-                  height={dimensions.height}
-                  size="fixed"
-                  drawShadow={false}
-                  maxShadowOpacity={0}
-                  showCover={true}
-                  autoCenter={true}
-                  mobileScrollSupport={true}
-                  usePortrait={isMobile}
-                  onFlip={handleFlip}
-                  className="shadow-2xl mx-auto"
-                  style={{ margin: '0 auto' }}
-                >
-                  {Array.from(new Array(numPages), (_, index) => (
-                    <PageWrapper 
-                      key={index} 
-                      pageNumber={index + 1} 
-                      width={dimensions.width} 
-                    />
-                  ))}
-                  {/* Add an empty back cover if the page count is odd so the last spread aligns correctly */}
-                  {numPages % 2 !== 0 && (
-                    <div className="bg-black overflow-hidden flex items-center justify-center h-full w-full" />
-                  )}
-                </FlipBook>
-              )}
-            </motion.div>
-          )}
-        </Document>
+                  renderTextLayer={false}
+                  renderAnnotationLayer={false}
+                  devicePixelRatio={Math.max(window.devicePixelRatio || 1, 3)}
+                  className="pointer-events-none"
+                />
+              </motion.div>
+            )}
+          </Document>
+        )}
+
+        {/* Full portfolio — loads in the background, crossfades in when ready */}
+        <div className={fullPdfLoaded ? 'block' : 'hidden'}>
+          <Document
+            file={pdfUrl}
+            onLoadSuccess={onDocumentLoadSuccess}
+            onLoadError={setError}
+            loading={null}
+          >
+            {numPages > 0 && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: isResetting || dimensions.width === 0 ? 0 : 1 }}
+                transition={{ duration: 0.4, ease: "easeInOut" }}
+                className="flex items-center justify-center w-full h-full"
+              >
+                {aspectRatio && dimensions.width > 0 && (
+                  <FlipBook
+                    key={resetKey}
+                    ref={flipBookRef}
+                    width={dimensions.width}
+                    height={dimensions.height}
+                    size="fixed"
+                    drawShadow={false}
+                    maxShadowOpacity={0}
+                    showCover={true}
+                    autoCenter={true}
+                    mobileScrollSupport={true}
+                    usePortrait={isMobile}
+                    onFlip={handleFlip}
+                    className="shadow-2xl mx-auto"
+                    style={{ margin: '0 auto' }}
+                  >
+                    {Array.from(new Array(numPages), (_, index) => (
+                      <PageWrapper 
+                        key={index} 
+                        pageNumber={index + 1} 
+                        width={dimensions.width} 
+                      />
+                    ))}
+                    {/* Add an empty back cover if the page count is odd so the last spread aligns correctly */}
+                    {numPages % 2 !== 0 && (
+                      <div className="bg-black overflow-hidden flex items-center justify-center h-full w-full" />
+                    )}
+                  </FlipBook>
+                )}
+              </motion.div>
+            )}
+          </Document>
+        </div>
 
         {error && (
           <div className="absolute flex flex-col items-center gap-4 bg-white p-8 rounded-xl shadow-xl">
