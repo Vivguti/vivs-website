@@ -157,11 +157,12 @@ export default function FlipbookViewer({
   return (
     <div ref={containerRef} className="relative w-full h-full flex items-center justify-center p-2 md:p-8">
       <motion.div 
-        animate={{ scale: zoom }}
+        animate={{ scale: zoom, x: zoom <= 1 ? 0 : undefined, y: zoom <= 1 ? 0 : undefined }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
         className="w-full h-full flex items-center justify-center transform-gpu"
         drag={zoom > 1}
         dragConstraints={{ left: -500, right: 500, top: -500, bottom: 500 }}
+        dragElastic={0.1}
       >
         {/* Instant cover placeholder — loads almost immediately from tiny 1-page PDF */}
         {!fullPdfLoaded && (
