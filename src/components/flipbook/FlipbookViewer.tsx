@@ -206,34 +206,41 @@ export default function FlipbookViewer({
                 className="flex items-center justify-center w-full h-full"
               >
                 {aspectRatio && dimensions.width > 0 && (
-                  <FlipBook
-                    key={resetKey}
-                    ref={flipBookRef}
-                    width={dimensions.width}
-                    height={dimensions.height}
-                    size="fixed"
-                    drawShadow={false}
-                    maxShadowOpacity={0}
-                    showCover={true}
-                    autoCenter={true}
-                    mobileScrollSupport={true}
-                    usePortrait={isMobile}
-                    onFlip={handleFlip}
-                    className="shadow-2xl mx-auto"
-                    style={{ margin: '0 auto' }}
-                  >
-                    {Array.from(new Array(numPages), (_, index) => (
-                      <PageWrapper 
-                        key={index} 
-                        pageNumber={index + 1} 
-                        width={dimensions.width} 
-                      />
-                    ))}
-                    {/* Add an empty back cover if the page count is odd so the last spread aligns correctly */}
-                    {numPages % 2 !== 0 && (
-                      <div className="bg-black overflow-hidden flex items-center justify-center h-full w-full" />
+                  <div className="relative">
+                    {/* Block all flipbook swipe/click interactions while zoomed */}
+                    {zoom > 1 && (
+                      <div className="absolute inset-0 z-10" />
                     )}
-                  </FlipBook>
+                    <FlipBook
+                      key={resetKey}
+                      ref={flipBookRef}
+                      width={dimensions.width}
+                      height={dimensions.height}
+                      size="fixed"
+                      drawShadow={false}
+                      maxShadowOpacity={0}
+                      showCover={true}
+                      autoCenter={true}
+                      mobileScrollSupport={zoom <= 1}
+                      disableFlipByClick={zoom > 1}
+                      usePortrait={isMobile}
+                      onFlip={handleFlip}
+                      className="shadow-2xl mx-auto"
+                      style={{ margin: '0 auto' }}
+                    >
+                      {Array.from(new Array(numPages), (_, index) => (
+                        <PageWrapper 
+                          key={index} 
+                          pageNumber={index + 1} 
+                          width={dimensions.width} 
+                        />
+                      ))}
+                      {/* Add an empty back cover if the page count is odd so the last spread aligns correctly */}
+                      {numPages % 2 !== 0 && (
+                        <div className="bg-black overflow-hidden flex items-center justify-center h-full w-full" />
+                      )}
+                    </FlipBook>
+                  </div>
                 )}
               </motion.div>
             )}
