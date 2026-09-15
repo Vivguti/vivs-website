@@ -17,24 +17,18 @@ interface FlipbookViewerProps {
 }
 
 // Create a wrapper component for the page so react-pageflip can inject its refs
-const PageWrapper = forwardRef<HTMLDivElement, { pageNumber: number, width: number, shouldRender: boolean }>(
-  ({ pageNumber, width, shouldRender }, ref) => {
+const PageWrapper = forwardRef<HTMLDivElement, { pageNumber: number, width: number }>(
+  ({ pageNumber, width }, ref) => {
     return (
-      <div ref={ref} className="bg-[#e5e5e5] overflow-hidden flex items-center justify-center h-full w-full">
-        {shouldRender ? (
-          <Page 
-            pageNumber={pageNumber}
-            width={width}
-            renderTextLayer={false}
-            renderAnnotationLayer={false}
-            devicePixelRatio={Math.min(window.devicePixelRatio || 1, 1.5)}
-            className="pointer-events-none"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs uppercase tracking-widest">
-            {/* Empty placeholder to save memory/rendering time */}
-          </div>
-        )}
+      <div ref={ref} className="bg-white overflow-hidden flex items-center justify-center h-full w-full">
+        <Page 
+          pageNumber={pageNumber}
+          width={width}
+          renderTextLayer={false}
+          renderAnnotationLayer={false}
+          devicePixelRatio={Math.min(window.devicePixelRatio || 1, 1.5)}
+          className="pointer-events-none"
+        />
       </div>
     );
   }
@@ -251,19 +245,13 @@ export default function FlipbookViewer({
                       className="shadow-2xl mx-auto"
                       style={{ margin: '0 auto' }}
                     >
-                      {Array.from(new Array(numPages), (_, index) => {
-                        // Only render pages that are close to the current view to save memory and load time
-                        // currentSpread is the current page index
-                        const isClose = Math.abs(index - currentSpread) <= 4;
-                        return (
-                          <PageWrapper 
-                            key={index} 
-                            pageNumber={index + 1} 
-                            width={dimensions.width} 
-                            shouldRender={isClose}
-                          />
-                        );
-                      })}
+                      {Array.from(new Array(numPages), (_, index) => (
+                        <PageWrapper 
+                          key={index} 
+                          pageNumber={index + 1} 
+                          width={dimensions.width} 
+                        />
+                      ))}
                       {/* Add an empty back cover if the page count is odd so the last spread aligns correctly */}
                       {numPages % 2 !== 0 && (
                         <div className="bg-black overflow-hidden flex items-center justify-center h-full w-full" />
