@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 // ─── Project Data ────────────────────
 const projects = [
@@ -347,12 +348,12 @@ export default function SelectedWorks() {
           transition={{ duration: 1, delay: 0.8, ease: EASE }}
           className="flex justify-start"
         >
-          <a
-            href="/portfolio"
+          <Link
+            to="/portfolio"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/10 text-white text-xs font-semibold tracking-widest uppercase border border-white/30 hover:bg-white/20 transition-all duration-300 backdrop-blur-md"
           >
             VIEW INTERACTIVE PORTFOLIO
-          </a>
+          </Link>
         </motion.div>
       </motion.div>
 
