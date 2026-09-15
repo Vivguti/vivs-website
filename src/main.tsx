@@ -1,5 +1,5 @@
 // Polyfills for older Safari versions (iOS 14-16) to support modern pdfjs-dist
-if (!Map.prototype.getOrInsertComputed) {
+if (!(Map.prototype as any).getOrInsertComputed) {
   (Map.prototype as any).getOrInsertComputed = function (key: any, callback: (key: any) => any) {
     if (this.has(key)) return this.get(key);
     const value = callback(key);
