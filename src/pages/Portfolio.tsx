@@ -153,7 +153,8 @@ export default function Portfolio() {
   return (
     <div 
       ref={containerRef} 
-      className="fixed top-0 left-0 w-[100dvw] h-[100dvh] z-[100] bg-[#e5e5e5] flex flex-col font-body overflow-hidden"
+      className="fixed top-0 left-0 w-full h-full z-[100] bg-[#e5e5e5] flex flex-col font-body overflow-hidden"
+      style={{ width: '100vw', height: '100vh', ...({ width: '100dvw', height: '100dvh' } as any) }}
     >
       {/* Top Bar */}
       <header className={`flex items-center justify-between px-4 md:px-6 py-3 md:py-4 pt-[max(0.75rem,env(safe-area-inset-top))] bg-[#e5e5e5] z-10 transition-opacity duration-500 ${isIdle ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>

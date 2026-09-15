@@ -65,8 +65,8 @@ export default function FlipbookViewer({
       const horizontalPadding = isMobile ? 8 : (isTablet ? 40 : 120);
       const verticalPadding = isMobile ? 16 : (isTablet ? 60 : 120); 
       
-      const maxAvailableWidth = cw - horizontalPadding;
-      const maxAvailableHeight = ch - verticalPadding;
+      const maxAvailableWidth = Math.max(0, cw - horizontalPadding);
+      const maxAvailableHeight = Math.max(0, ch - verticalPadding);
 
       // Single page max width based on available space
       const maxPageWidth = isMobile ? maxAvailableWidth : maxAvailableWidth / 2;
