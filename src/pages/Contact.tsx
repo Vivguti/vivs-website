@@ -1,12 +1,118 @@
 import { motion } from 'framer-motion';
 import GlassPanel from '../components/GlassPanel';
 import { useState } from 'react';
+import type { FormEvent, ChangeEvent } from 'react';
+
+// Replace this with the URL you get from deploying your Google Apps Script Web App
+const GOOGLE_SCRIPT_URL = "YOUR_GOOGLE_SCRIPT_WEB_APP_URL_HERE";
+
+interface FormData {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+  honeypot: string;
+}
 
 export default function Contact() {
   const [focusedInput, setFocusedInput] = useState<string | null>(null);
+  
+  const [formData, setFormData] = useState<FormData>({
+    name: '',
+    email: '',
+    subject: '',
+    message: '',
+    honeypot: '' // Spam protection
+  });
+  
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [lastSubmitTime, setLastSubmitTime] = useState<number>(0);
 
   const handleFocus = (name: string) => setFocusedInput(name);
   const handleBlur = () => setFocusedInput(null);
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    if (error) setError(null);
+  };
+
+  const validateEmail = (email: string) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    
+    // Honeypot check (bot caught)
+    if (formData.honeypot) {
+      return;
+    }
+
+    // Validation
+    if (!formData.name.trim()) return setError("Name is required.");
+    if (formData.name.length > 100) return setError("Name is too long (max 100 characters).");
+    if (!formData.email.trim()) return setError("Email is required.");
+    if (!validateEmail(formData.email)) return setError("Please enter a valid email address.");
+    if (formData.email.length > 100) return setError("Email is too long (max 100 characters).");
+    if (formData.subject.length > 200) return setError("Subject is too long (max 200 characters).");
+    if (!formData.message.trim()) return setError("Message is required.");
+    if (formData.message.length > 3000) return setError("Message is too long (max 3000 characters).");
+
+    // Cooldown check (60 seconds)
+    const now = Date.now();
+    if (now - lastSubmitTime < 60000) {
+      return setError("Please wait a minute before sending another message.");
+    }
+
+    if (GOOGLE_SCRIPT_URL === "YOUR_GOOGLE_SCRIPT_WEB_APP_URL_HERE") {
+      return setError("Please connect the Google Apps Script URL in Contact.tsx");
+    }
+
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      // Create x-www-form-urlencoded data which Google Apps Script parses nicely
+      const formBody = new URLSearchParams();
+      formBody.append('name', formData.name.trim());
+      formBody.append('email', formData.email.trim());
+      formBody.append('subject', formData.subject.trim());
+      formBody.append('message', formData.message.trim());
+
+      const response = await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        body: formBody,
+        // mode: 'no-cors' can be used if you get CORS errors, but you won't be able to read the response.
+        // Google Apps Script requires following redirects properly or using text/plain.
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+
+      // The Web App should return a JSON indicating success
+      const result = await response.json();
+
+      if (result.status === 'success') {
+        setIsSuccess(true);
+        setLastSubmitTime(now);
+        setFormData({ name: '', email: '', subject: '', message: '', honeypot: '' });
+      } else {
+        throw new Error(result.message || 'Submission failed');
+      }
+    } catch (err) {
+      // If CORS fails completely or another network error occurs, we handle it here
+      console.error(err);
+      
+      // Fallback for strict CORS environments where fetch throws an error but the request still succeeded (no-cors scenario)
+      // If we got here but the request actually went through, the Google script wouldn't return proper CORS headers unless set up correctly.
+      setError("Failed to send message. Please try again or email directly.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="pt-32 pb-24 px-6 md:px-12 max-w-5xl mx-auto min-h-[calc(100vh-80px)] flex flex-col justify-center">
@@ -65,70 +171,145 @@ export default function Contact() {
         {/* Contact Form */}
         <div>
           <GlassPanel delay={0.6} heavy>
-            <form className="flex flex-col gap-6" onSubmit={(e) => e.preventDefault()}>
-              
-              <div className="relative">
-                <label className="font-body text-xs font-bold tracking-[0.1em] uppercase text-white/80 mb-2 block">Name</label>
-                <div className="relative">
-                  <input 
-                    type="text" 
-                    onFocus={() => handleFocus('name')}
-                    onBlur={handleBlur}
-                    className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none transition-colors"
-                    placeholder="Jane Doe"
-                  />
-                  <motion.div 
-                    initial={false}
-                    animate={{ opacity: focusedInput === 'name' ? 1 : 0 }}
-                    className="absolute inset-0 rounded-lg border-2 border-white pointer-events-none"
-                  />
+            {isSuccess ? (
+              <div className="flex flex-col items-center justify-center py-12 text-center h-full">
+                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(255,255,255,0.5)]">
+                  <span className="material-icons text-gray-900 text-3xl">check</span>
                 </div>
+                <h3 className="font-display text-2xl text-white mb-2">Message Sent</h3>
+                <p className="font-body text-white/80">Message sent successfully. Thank you for reaching out!</p>
+                <button 
+                  onClick={() => setIsSuccess(false)}
+                  className="mt-8 px-6 py-2 border border-white/30 rounded-lg text-white hover:bg-white/10 transition-colors font-body text-sm tracking-wider uppercase"
+                >
+                  Send Another
+                </button>
               </div>
+            ) : (
+              <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+                
+                {/* Honeypot field - visually hidden, bots will fill it out */}
+                <input 
+                  type="text" 
+                  name="honeypot" 
+                  style={{ display: 'none' }} 
+                  tabIndex={-1} 
+                  autoComplete="off"
+                  value={formData.honeypot}
+                  onChange={handleChange}
+                />
 
-              <div className="relative">
-                <label className="font-body text-xs font-bold tracking-[0.1em] uppercase text-white/80 mb-2 block">Email</label>
                 <div className="relative">
-                  <input 
-                    type="email" 
-                    onFocus={() => handleFocus('email')}
-                    onBlur={handleBlur}
-                    className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none transition-colors"
-                    placeholder="jane@example.com"
-                  />
-                  <motion.div 
-                    initial={false}
-                    animate={{ opacity: focusedInput === 'email' ? 1 : 0 }}
-                    className="absolute inset-0 rounded-lg border-2 border-white pointer-events-none"
-                  />
+                  <label className="font-body text-xs font-bold tracking-[0.1em] uppercase text-white/80 mb-2 block">Name *</label>
+                  <div className="relative">
+                    <input 
+                      type="text"
+                      name="name"
+                      required
+                      value={formData.name}
+                      onChange={handleChange}
+                      onFocus={() => handleFocus('name')}
+                      onBlur={handleBlur}
+                      className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none transition-colors"
+                      placeholder="Jane Doe"
+                    />
+                    <motion.div 
+                      initial={false}
+                      animate={{ opacity: focusedInput === 'name' ? 1 : 0 }}
+                      className="absolute inset-0 rounded-lg border-2 border-white pointer-events-none"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div className="relative">
-                <label className="font-body text-xs font-bold tracking-[0.1em] uppercase text-white/80 mb-2 block">Message</label>
                 <div className="relative">
-                  <textarea 
-                    rows={4}
-                    onFocus={() => handleFocus('message')}
-                    onBlur={handleBlur}
-                    className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none transition-colors resize-none"
-                    placeholder="Tell me about your project..."
-                  />
-                  <motion.div 
-                    initial={false}
-                    animate={{ opacity: focusedInput === 'message' ? 1 : 0 }}
-                    className="absolute inset-0 rounded-lg border-2 border-white pointer-events-none"
-                  />
+                  <label className="font-body text-xs font-bold tracking-[0.1em] uppercase text-white/80 mb-2 block">Email *</label>
+                  <div className="relative">
+                    <input 
+                      type="email"
+                      name="email"
+                      required
+                      value={formData.email}
+                      onChange={handleChange}
+                      onFocus={() => handleFocus('email')}
+                      onBlur={handleBlur}
+                      className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none transition-colors"
+                      placeholder="jane@example.com"
+                    />
+                    <motion.div 
+                      initial={false}
+                      animate={{ opacity: focusedInput === 'email' ? 1 : 0 }}
+                      className="absolute inset-0 rounded-lg border-2 border-white pointer-events-none"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full mt-4 py-4 rounded-lg bg-white text-gray-900 font-body font-bold uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.5)] transition-shadow"
-              >
-                Send Message
-              </motion.button>
-            </form>
+                <div className="relative">
+                  <label className="font-body text-xs font-bold tracking-[0.1em] uppercase text-white/80 mb-2 block">Subject</label>
+                  <div className="relative">
+                    <input 
+                      type="text"
+                      name="subject"
+                      value={formData.subject}
+                      onChange={handleChange}
+                      onFocus={() => handleFocus('subject')}
+                      onBlur={handleBlur}
+                      className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none transition-colors"
+                      placeholder="Project Inquiry"
+                    />
+                    <motion.div 
+                      initial={false}
+                      animate={{ opacity: focusedInput === 'subject' ? 1 : 0 }}
+                      className="absolute inset-0 rounded-lg border-2 border-white pointer-events-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="relative">
+                  <label className="font-body text-xs font-bold tracking-[0.1em] uppercase text-white/80 mb-2 block">Message *</label>
+                  <div className="relative">
+                    <textarea 
+                      name="message"
+                      required
+                      rows={4}
+                      value={formData.message}
+                      onChange={handleChange}
+                      onFocus={() => handleFocus('message')}
+                      onBlur={handleBlur}
+                      className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none transition-colors resize-none"
+                      placeholder="Tell me about your project..."
+                    />
+                    <motion.div 
+                      initial={false}
+                      animate={{ opacity: focusedInput === 'message' ? 1 : 0 }}
+                      className="absolute inset-0 rounded-lg border-2 border-white pointer-events-none"
+                    />
+                  </div>
+                </div>
+
+                {error && (
+                  <div className="text-red-400 font-body text-sm text-center bg-red-900/20 py-2 rounded-lg border border-red-500/30">
+                    {error}
+                  </div>
+                )}
+
+                <motion.button
+                  type="submit"
+                  disabled={isSubmitting}
+                  whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
+                  whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
+                  className={`w-full mt-2 py-4 rounded-lg bg-white text-gray-900 font-body font-bold uppercase tracking-widest text-sm shadow-[0_0_20px_rgba(255,255,255,0.3)] transition-all flex items-center justify-center gap-2 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'hover:shadow-[0_0_30px_rgba(255,255,255,0.5)]'}`}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-gray-900 border-t-transparent rounded-full animate-spin"></div>
+                      Sending...
+                    </>
+                  ) : (
+                    'Send Message'
+                  )}
+                </motion.button>
+              </form>
+            )}
           </GlassPanel>
         </div>
       </div>
