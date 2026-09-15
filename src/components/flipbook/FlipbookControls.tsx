@@ -1,12 +1,10 @@
-import { Grid, Maximize, Minimize, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
+import { Grid, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 
 interface FlipbookControlsProps {
   currentSpread: number;
   totalSpreads: number;
   isMobile: boolean;
   onToggleThumbnails: () => void;
-  onToggleFullscreen: () => void;
-  isFullscreen: boolean;
   onZoomIn: () => void;
   onZoomOut: () => void;
   onZoomReset: () => void;
@@ -18,8 +16,6 @@ export default function FlipbookControls({
   totalSpreads,
   isMobile,
   onToggleThumbnails,
-  onToggleFullscreen,
-  isFullscreen,
   onZoomIn,
   onZoomOut,
   onZoomReset,
@@ -89,16 +85,6 @@ export default function FlipbookControls({
         aria-label="Zoom in"
       >
         <ZoomIn size={20} />
-      </button>
-
-      <div className="w-px h-4 bg-gray-300" />
-
-      <button 
-        onClick={onToggleFullscreen}
-        className="text-gray-600 hover:text-black transition-colors"
-        aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
-      >
-        {isFullscreen ? <Minimize size={20} /> : <Maximize size={20} />}
       </button>
     </div>
   );

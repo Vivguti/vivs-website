@@ -23,19 +23,21 @@ export default function Portfolio() {
   const maxSpread = Math.ceil(TOTAL_PAGES / 2);
   
   const [isSinglePage, setIsSinglePage] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
   const [zoom, setZoom] = useState(1);
   const [showThumbnails, setShowThumbnails] = useState(false);
   const [isIdle, setIsIdle] = useState(false);
   
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Detect device type for single-page vs two-page spread
   useEffect(() => {
     const handleResize = () => {
-      // const width = typeof window !== 'undefined' ? window.innerWidth : 1200;
-  // const height = typeof window !== 'undefined' ? window.innerHeight : 800;
-      // Single page if strictly mobile width OR if the screen is taller than it is wide (portrait mode tablet/phone)
-      setIsSinglePage(false);
+      const width = typeof window !== 'undefined' ? window.innerWidth : 1200;
+      const height = typeof window !== 'undefined' ? window.innerHeight : 800;
+      // Single page on phones (narrow width) or portrait orientation on small devices
+      const isPhone = width < 768;
+      const isPortraitSmall = width < 1024 && height > width;
+      setIsSinglePage(isPhone || isPortraitSmall);
     };
     handleResize();
     window.addEventListener('resize', handleResize);
@@ -67,15 +69,6 @@ export default function Portfolio() {
       window.removeEventListener('keydown', resetIdle);
       clearTimeout(timeout);
     };
-  }, []);
-
-  // Fullscreen listener
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-    };
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -130,16 +123,6 @@ export default function Portfolio() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   });
 
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      containerRef.current?.requestFullscreen().catch(err => {
-        console.error(`Error attempting to enable fullscreen: ${err.message}`);
-      });
-    } else {
-      document.exitFullscreen();
-    }
-  };
-
   const handleDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
     setNumPages(numPages);
   };
@@ -153,7 +136,7 @@ export default function Portfolio() {
     document.body.removeChild(link);
   };
 
-  // Prevent zooming out too far
+  // Zoom controls
   const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.5, 3));
   const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.5, 1));
   const handleZoomReset = () => setZoom(1);
@@ -164,11 +147,12 @@ export default function Portfolio() {
       className="fixed top-0 left-0 w-[100dvw] h-[100dvh] z-[100] bg-[#e5e5e5] flex flex-col font-body overflow-hidden"
     >
       {/* Top Bar */}
-      <header className={`flex items-center justify-between px-6 py-4 pt-[max(1rem,env(safe-area-inset-top))] bg-[#e5e5e5] z-10 transition-opacity duration-500 ${isFullscreen || isIdle ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+      <header className={`flex items-center justify-between px-4 md:px-6 py-3 md:py-4 pt-[max(0.75rem,env(safe-area-inset-top))] bg-[#e5e5e5] z-10 transition-opacity duration-500 ${isIdle ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
         <div className="flex items-center gap-4">
           <Link to="/selected-works" className="text-gray-500 hover:text-black flex items-center gap-2 text-xs font-semibold tracking-widest uppercase transition-colors" aria-label="Back to Selected Works">
             <ChevronLeft size={16} />
-            BACK TO SELECTED WORKS
+            <span className="hidden sm:inline">BACK TO SELECTED WORKS</span>
+            <span className="sm:hidden">BACK</span>
           </Link>
         </div>
         <div className="flex items-center gap-4">
@@ -185,7 +169,6 @@ export default function Portfolio() {
           currentSpread={currentSpread}
           isMobile={isSinglePage}
           zoom={zoom}
-          isFullscreen={isFullscreen}
           onLoadSuccess={handleDocumentLoadSuccess}
           onPageChange={(pageIndex) => {
             setCurrentSpread(isSinglePage ? pageIndex : Math.floor((pageIndex + 1) / 2));
@@ -196,7 +179,7 @@ export default function Portfolio() {
         <button 
           onClick={goPrev} 
           disabled={currentSpread === 0}
-          className={`absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-white/50 backdrop-blur hover:bg-white/80 disabled:opacity-0 transition-all duration-300 z-20 ${isIdle || isZoomed ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+          className={`absolute left-2 md:left-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-white/50 backdrop-blur hover:bg-white/80 disabled:opacity-0 transition-all duration-300 z-20 ${isIdle || isZoomed ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
           aria-label="Previous page"
         >
           <ChevronLeft size={24} className="text-gray-800" />
@@ -204,7 +187,7 @@ export default function Portfolio() {
         
         <button 
           onClick={goNext} 
-          className={`absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center rounded-full bg-white/50 backdrop-blur hover:bg-white/80 transition-all duration-300 z-20 ${isIdle || isZoomed ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+          className={`absolute right-2 md:right-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-white/50 backdrop-blur hover:bg-white/80 transition-all duration-300 z-20 ${isIdle || isZoomed ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
           aria-label="Next page"
         >
           <ChevronRight size={24} className="text-gray-800" />
@@ -218,8 +201,6 @@ export default function Portfolio() {
           totalSpreads={isSinglePage ? numPages : maxSpread}
           isMobile={isSinglePage}
           onToggleThumbnails={() => setShowThumbnails(!showThumbnails)}
-          onToggleFullscreen={toggleFullscreen}
-          isFullscreen={isFullscreen}
           onZoomIn={handleZoomIn}
           onZoomOut={handleZoomOut}
           onZoomReset={handleZoomReset}

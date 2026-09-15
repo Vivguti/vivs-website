@@ -12,7 +12,6 @@ interface FlipbookViewerProps {
   pdfUrl: string;
   isMobile: boolean;
   zoom: number;
-  isFullscreen: boolean;
   onLoadSuccess: (data: { numPages: number }) => void;
   onPageChange?: (pageIndex: number) => void;
 }
@@ -41,7 +40,6 @@ export default function FlipbookViewer({
   currentSpread,
   isMobile, 
   zoom, 
-  isFullscreen,
   onLoadSuccess,
   onPageChange
 }: FlipbookViewerProps & { currentSpread: number }) {
@@ -62,9 +60,10 @@ export default function FlipbookViewer({
       const cw = containerRef.current!.clientWidth;
       const ch = containerRef.current!.clientHeight;
       
-      // In fullscreen, use near-zero padding to maximize page size
-      const horizontalPadding = isFullscreen ? 8 : (isMobile ? 32 : 120);
-      const verticalPadding = isFullscreen ? 8 : (isMobile ? 120 : 160); 
+      // Device-aware padding: phones get near-zero, tablets get minimal, desktops get comfortable
+      const isTablet = !isMobile && cw < 1024;
+      const horizontalPadding = isMobile ? 8 : (isTablet ? 40 : 120);
+      const verticalPadding = isMobile ? 16 : (isTablet ? 60 : 120); 
       
       const maxAvailableWidth = cw - horizontalPadding;
       const maxAvailableHeight = ch - verticalPadding;
@@ -87,7 +86,7 @@ export default function FlipbookViewer({
     updateSize();
     window.addEventListener('resize', updateSize);
     return () => window.removeEventListener('resize', updateSize);
-  }, [isMobile, aspectRatio, isFullscreen]);
+  }, [isMobile, aspectRatio]);
 
   const [resetKey, setResetKey] = useState(0);
   const [isResetting, setIsResetting] = useState(false);
@@ -155,7 +154,7 @@ export default function FlipbookViewer({
   };
 
   return (
-    <div ref={containerRef} className="relative w-full h-full flex items-center justify-center p-2 md:p-8">
+    <div ref={containerRef} className="relative w-full h-full flex items-center justify-center p-1 md:p-4 lg:p-8">
       <motion.div 
         animate={{ scale: zoom, x: zoom <= 1 ? 0 : undefined, y: zoom <= 1 ? 0 : undefined }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}

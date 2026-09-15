@@ -92,8 +92,7 @@ export default function Home() {
     offset: ['start start', 'end end'],
   });
 
-  // Critically-damped spring interpolation (damping 35, stiffness 70, restDelta 0.001)
-  // Ensures ZERO spring oscillation or vibration during slow scrolling on mobile or desktop.
+  // Critically-damped spring interpolation
   const smoothProgress = useSpring(scrollYProgress, {
     stiffness: 70,
     damping: 35,
@@ -102,70 +101,37 @@ export default function Home() {
   });
 
   /* ═══════════════════════════════════════════════════════════════════════════
-     ACT 1 — THE BLUEPRINT  (0 → 0.22)
-     Blueprint visible immediately. Scales from subtle zoom to settled.
-     Manifesto 1 types in word-by-word with scroll.
+     SINGLE IMAGE — Render visible from the start, gentle cinematic zoom
   ═══════════════════════════════════════════════════════════════════════════ */
-  const bp_scale     = useTransform(smoothProgress, [0, 0.12],   [1.10, 1.03]);
-  const bp_y         = useTransform(smoothProgress, [0, 0.45],   ['0%', '-6%']);
-  const bp_filter    = useTransform(
-    smoothProgress, [0, 0.20, 0.40],
-    ['brightness(1.05) contrast(1.1)', 'brightness(1.0) contrast(1.05)', 'brightness(0.9) contrast(1.0)']
-  );
+  const img_scale = useTransform(smoothProgress, [0, 0.5, 1.0], [1.08, 1.03, 1.0]);
+  const img_y     = useTransform(smoothProgress, [0, 1.0], ['0%', '-5%']);
 
-  // Grid overlay pulsing behind blueprint
-  const gridOp = useTransform(smoothProgress, [0, 0.04, 0.18, 0.26], [0, 0.07, 0.07, 0]);
-
-  // Manifesto 1 container
-  const m1_op = useTransform(smoothProgress, [0.015, 0.05, 0.20, 0.26], [0, 1, 1, 0]);
-  const m1_y  = useTransform(smoothProgress, [0.015, 0.05, 0.20, 0.26], [40, 0, 0, -30]);
+  // Warm ambient glow
+  const glowOp = useTransform(smoothProgress, [0.15, 0.35, 0.55, 0.70], [0, 0.7, 0.7, 0]);
 
   /* ═══════════════════════════════════════════════════════════════════════════
-     ACT 2 — THE METAMORPHOSIS  (0.20 → 0.48)
-     Render image crossfades over blueprint via clip-path wipe.
-     Blueprint fades to 0. Render saturates to full warmth.
-     Manifesto 2 appears.
+     TEXT — Manifesto 1 appears first, fades out, Manifesto 2 appears, fades out
   ═══════════════════════════════════════════════════════════════════════════ */
-  // Clip-path reveal — circle grows from center
-  const clipProgress = useTransform(smoothProgress, [0.18, 0.44], [0, 150]);
-  const renderClip   = useTransform(clipProgress, (v) => `circle(${v}% at 55% 50%)`);
-
-  // Render layer
-  const rn_opacity = useTransform(smoothProgress, [0.18, 0.25], [0, 1]);
-  const rn_scale   = useTransform(smoothProgress, [0.18, 0.48, 0.70], [1.06, 1.02, 1.0]);
-  const rn_y       = useTransform(smoothProgress, [0.18, 0.70], ['0%', '-5%']);
-
-  // Blueprint layer fades out during crossfade
-  const bp_fadeout  = useTransform(smoothProgress, [0.28, 0.44], [1, 0]);
-
-  // Warm ambient glow intensifies
-  const glowOp = useTransform(smoothProgress, [0.25, 0.42, 0.65, 0.76], [0, 0.7, 0.7, 0]);
+  // Manifesto 1 container
+  const m1_op = useTransform(smoothProgress, [0.02, 0.06, 0.22, 0.30], [0, 1, 1, 0]);
+  const m1_y  = useTransform(smoothProgress, [0.02, 0.06, 0.22, 0.30], [40, 0, 0, -30]);
 
   // Manifesto 2 container
-  const m2_op = useTransform(smoothProgress, [0.25, 0.30, 0.44, 0.50], [0, 1, 1, 0]);
-  const m2_y  = useTransform(smoothProgress, [0.25, 0.30, 0.44, 0.50], [40, 0, 0, -30]);
+  const m2_op = useTransform(smoothProgress, [0.28, 0.34, 0.48, 0.56], [0, 1, 1, 0]);
+  const m2_y  = useTransform(smoothProgress, [0.28, 0.34, 0.48, 0.56], [40, 0, 0, -30]);
 
   /* ═══════════════════════════════════════════════════════════════════════════
-     ACT 3 — THE REVEAL  (0.48 → 0.72)
-     Full render visible. Slow cinematic zoom. CTA + annotations appear.
+     FINAL FRAME — Blue overlay + Selected Works slides up immediately after
   ═══════════════════════════════════════════════════════════════════════════ */
-
-  /* ═══════════════════════════════════════════════════════════════════════════
-     ACT 4 — THE FINAL FRAME
-     Blue overlay settles over the render. Selected Works spread smoothly slides up into view.
-  ═══════════════════════════════════════════════════════════════════════════ */
-  // Blue overlay - transitions to full opacity right after the wipe finishes
-  const blueOverlayOp = useTransform(smoothProgress, [0.46, 0.70], [0, 1.0]);
-
-  // Selected Works spread - continuously slides up without any dead scrolling gap
-  const ctaOp    = useTransform(smoothProgress, [0.48, 0.80], [0, 1]);
-  const ctaY     = useTransform(smoothProgress, [0.46, 0.85], ['40vh', '0vh']);
-  const ctaScale = useTransform(smoothProgress, [0.46, 0.85], [0.92, 1]);
+  const blueOverlayOp = useTransform(smoothProgress, [0.50, 0.70], [0, 1.0]);
+  const ctaOp    = useTransform(smoothProgress, [0.55, 0.80], [0, 1]);
+  const ctaY     = useTransform(smoothProgress, [0.52, 0.88], ['40vh', '0vh']);
+  const ctaScale = useTransform(smoothProgress, [0.52, 0.88], [0.92, 1]);
 
   // Scroll cue — use raw progress so it hides immediately when user starts scrolling
   const cueOp = useTransform(scrollYProgress, [0, 0.035], [1, 0]);
 
-  // Progress bar visibility — raw progress so it's always in sync with real scroll
+  // Progress bar visibility
   const progressVis = useTransform(scrollYProgress, [0, 0.05, 0.70, 1.0], [0, 1, 1, 1]);
 
   // Background tone shift
@@ -175,28 +141,22 @@ export default function Home() {
     ['#93A3B9', '#8A9BB3', '#7B8FA6', '#6E8298', '#93A3B9']
   );
 
-  // ─── Vignette intensity ──────────────────────────────────────────────────
+  // Vignette intensity
   const vignetteOp = useTransform(smoothProgress, [0, 0.10, 0.50, 0.80], [0.6, 0.3, 0.2, 0.4]);
 
   return (
     <>
-      {/* ████  HERO — Interactive multi-act scroll canvas (300vh on mobile, 450vh on desktop)  ████ */}
+      {/* ████  HERO — Single image, two text transitions, quick scroll  ████ */}
       <section
         ref={heroRef}
         aria-label="Portfolio hero"
         className="relative w-full hero-scroll-container"
-        style={{ height: isMobile ? '300vh' : '450vh' }}
+        style={{ height: isMobile ? '250vh' : '350vh' }}
       >
         <motion.div
           className="sticky top-0 w-full h-screen overflow-hidden transform-gpu"
           style={{ backgroundColor: bgColor, willChange: 'background-color' }}
         >
-          {/* ── Architectural Grid ── */}
-          <motion.div
-            className="absolute inset-0 hero-grid pointer-events-none z-[1]"
-            style={{ opacity: gridOp }}
-          />
-
           {/* ── Cinematic Vignette ── */}
           <motion.div
             className="absolute inset-0 pointer-events-none z-[5]"
@@ -206,37 +166,13 @@ export default function Home() {
             }}
           />
 
-          {/* ═══════ IMAGE LAYERS ═══════ */}
-
-          {/* Blueprint Layer — full page cover */}
+          {/* ═══════ SINGLE IMAGE LAYER ═══════ */}
           <motion.div
             className="absolute inset-0 z-[2] transform-gpu"
             style={{
-              scale: isMobile ? 1 : bp_scale,
-              y: isMobile ? 0 : bp_y,
-              opacity: bp_fadeout,
-              willChange: 'transform, opacity',
-            }}
-          >
-            <motion.img
-              src="/hero-blueprint.jpg"
-              alt="Architectural Section — Blueprint"
-              className="hero-section-img w-full h-full object-cover object-center transform-gpu"
-              style={{
-                filter: isMobile ? 'none' : bp_filter,
-              }}
-            />
-          </motion.div>
-
-          {/* Render Layer — reveals via clip-path wipe on desktop, smooth GPU opacity blend on mobile */}
-          <motion.div
-            className="absolute inset-0 z-[3] transform-gpu"
-            style={{
-              opacity: rn_opacity,
-              scale: isMobile ? 1 : rn_scale,
-              y: isMobile ? 0 : rn_y,
-              clipPath: isMobile ? undefined : renderClip,
-              willChange: 'transform, opacity, clip-path',
+              scale: isMobile ? 1 : img_scale,
+              y: isMobile ? 0 : img_y,
+              willChange: 'transform',
             }}
           >
             <img
@@ -257,7 +193,7 @@ export default function Home() {
 
           {/* ═══════ TYPOGRAPHY ═══════ */}
 
-          {/* Manifesto 1 — Act 1 */}
+          {/* Manifesto 1 */}
           <ManifestoBlock
             words={MANIFESTO_1}
             containerClass="absolute left-[4%] md:left-[7%] top-1/2 -translate-y-1/2 z-[10] pointer-events-none max-w-[260px] sm:max-w-[300px] md:max-w-[360px]"
@@ -267,16 +203,17 @@ export default function Home() {
             stagger={0.018}
           />
 
-          {/* Manifesto 2 — Act 2 */}
+          {/* Manifesto 2 */}
           <ManifestoBlock
             words={MANIFESTO_2}
             containerClass="absolute left-[4%] md:left-[7%] top-1/2 -translate-y-1/2 z-[10] pointer-events-none max-w-[260px] sm:max-w-[300px] md:max-w-[380px]"
             containerStyle={{ opacity: m2_op, y: m2_y }}
             scrollProgress={smoothProgress}
-            baseOffset={0.22}
+            baseOffset={0.28}
             stagger={0.018}
           />
 
+          {/* ═══════ SELECTED WORKS SPREAD ═══════ */}
           <motion.div
             className="absolute inset-0 z-[12] flex flex-col justify-center items-center my-auto pt-20 pb-10 px-5 md:px-12 text-center pointer-events-auto"
             style={{ opacity: ctaOp, y: ctaY, scale: ctaScale }}
@@ -299,7 +236,7 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Featured Project Previews Grid - Expanded to span the page */}
+            {/* Featured Project Previews Grid */}
             <div className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 text-left shrink-0">
               <Link to="/project/living-infrastructure" className="group glass-panel rounded-3xl overflow-hidden p-5 md:p-8 transition-all duration-500 hover:bg-white/20">
                 <div className="w-full h-56 md:h-80 lg:h-96 rounded-2xl overflow-hidden mb-5">
@@ -319,9 +256,7 @@ export default function Home() {
             </div>
           </motion.div>
 
-          {/* ═══════ ANNOTATIONS — Act 3 (Removed) ═══════ */}
-
-          {/* ═══════ BLUE OVERLAY — Act 4 ═══════ */}
+          {/* ═══════ BLUE OVERLAY ═══════ */}
           <motion.div
             className="absolute inset-0 z-[8] pointer-events-none"
             style={{
