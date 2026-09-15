@@ -31,7 +31,6 @@ export default function PageWrapper({ children, className = '' }: PageWrapperPro
     <motion.div
       initial="initial"
       animate="animate"
-      exit="exit"
       variants={pageVariants}
       className={`min-h-screen w-full ${className}`}
     >

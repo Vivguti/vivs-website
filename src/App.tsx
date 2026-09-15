@@ -26,7 +26,7 @@ function AnimatedRoutes() {
   }, [location.pathname]);
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence>
       <Routes location={location} key={location.pathname}>
         <Route
           path="/"
