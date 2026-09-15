@@ -67,10 +67,6 @@ export default function Contact() {
       return setError("Please wait a minute before sending another message.");
     }
 
-    if (GOOGLE_SCRIPT_URL === "YOUR_GOOGLE_SCRIPT_WEB_APP_URL_HERE") {
-      return setError("Please connect the Google Apps Script URL in Contact.tsx");
-    }
-
     setIsSubmitting(true);
     setError(null);
 
