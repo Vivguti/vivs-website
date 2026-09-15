@@ -4,36 +4,6 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script>
-      // Polyfill Map/WeakMap.prototype.getOrInsertComputed for iPad Safari < 18.4
-      // This MUST run as a classic script in <head> before any ES module code loads
-      (function() {
-        if (typeof Map !== 'undefined' && !Map.prototype.getOrInsertComputed) {
-          Map.prototype.getOrInsertComputed = function(key, cb) {
-            if (this.has(key)) return this.get(key);
-            var v = cb(key); this.set(key, v); return v;
-          };
-        }
-        if (typeof WeakMap !== 'undefined' && !WeakMap.prototype.getOrInsertComputed) {
-          WeakMap.prototype.getOrInsertComputed = function(key, cb) {
-            if (this.has(key)) return this.get(key);
-            var v = cb(key); this.set(key, v); return v;
-          };
-        }
-        if (typeof Map !== 'undefined' && !Map.prototype.getOrInsert) {
-          Map.prototype.getOrInsert = function(key, dv) {
-            if (this.has(key)) return this.get(key);
-            this.set(key, dv); return dv;
-          };
-        }
-        if (typeof WeakMap !== 'undefined' && !WeakMap.prototype.getOrInsert) {
-          WeakMap.prototype.getOrInsert = function(key, dv) {
-            if (this.has(key)) return this.get(key);
-            this.set(key, dv); return dv;
-          };
-        }
-      })();
-    </script>
     <link rel="stylesheet" href="https://use.typekit.net/mfe0sbw.css" />
     <title>Vivian Gutierrez | Architecture Portfolio</title>
   </head>
