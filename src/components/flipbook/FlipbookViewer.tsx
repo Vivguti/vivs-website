@@ -229,6 +229,10 @@ export default function FlipbookViewer({
                       ref={flipBookRef}
                       width={dimensions.width}
                       height={dimensions.height}
+                      minWidth={10}
+                      maxWidth={5000}
+                      minHeight={10}
+                      maxHeight={5000}
                       size="fixed"
                       drawShadow={false}
                       maxShadowOpacity={0}
