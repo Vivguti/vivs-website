@@ -80,7 +80,10 @@ export default function FlipbookViewer({
         targetWidth = targetHeight * aspectRatio;
       }
 
-      setDimensions({ width: targetWidth, height: targetHeight });
+      setDimensions({ 
+        width: Math.floor(targetWidth), 
+        height: Math.floor(targetHeight) 
+      });
     };
 
     updateSize();
