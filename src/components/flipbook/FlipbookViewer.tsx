@@ -26,7 +26,7 @@ const PageWrapper = forwardRef<HTMLDivElement, { pageNumber: number, width: numb
           width={width}
           renderTextLayer={false}
           renderAnnotationLayer={false}
-          devicePixelRatio={Math.max(window.devicePixelRatio || 1, 4)}
+          devicePixelRatio={Math.max(window.devicePixelRatio || 1, 2)}
           className="pointer-events-none"
         />
       </div>
@@ -182,7 +182,7 @@ export default function FlipbookViewer({
                   width={dimensions.width}
                   renderTextLayer={false}
                   renderAnnotationLayer={false}
-                  devicePixelRatio={Math.max(window.devicePixelRatio || 1, 4)}
+                  devicePixelRatio={Math.max(window.devicePixelRatio || 1, 2)}
                   className="pointer-events-none"
                 />
               </motion.div>
