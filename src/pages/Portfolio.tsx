@@ -5,8 +5,23 @@ import { pdfjs } from 'react-pdf';
 import { ChevronLeft, ChevronRight, Download } from 'lucide-react';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
+import workerSrc from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+
+// Detect iPad (including iPadOS 13+ which reports as Mac)
+const isIPad = /iPad/i.test(navigator.userAgent) ||
+  (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
 // Configure PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+// On iPad: disable the worker so PDF.js runs on the main thread where our polyfill exists
+// On everything else: use the fast web worker as normal
+if (isIPad) {
+  // Setting workerSrc to empty string forces PDF.js to run on the main thread
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const pdfjsAny = pdfjs as any;
+  pdfjsAny.GlobalWorkerOptions.workerSrc = '';
+} else {
+  pdfjs.GlobalWorkerOptions.workerSrc = workerSrc;
+}
 
 import FlipbookControls from '../components/flipbook/FlipbookControls';
 import FlipbookViewer from '../components/flipbook/FlipbookViewer';
