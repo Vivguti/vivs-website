@@ -14,7 +14,7 @@ import FlipbookControls from '../components/flipbook/FlipbookControls';
 import FlipbookViewer from '../components/flipbook/FlipbookViewer';
 import ThumbnailDrawer from '../components/flipbook/ThumbnailDrawer';
 
-const PDF_URL = "/portfolio/Viv's Portfolio (Current 2026 Version).pdf";
+const PDF_URL = "/portfolio/vivs-portfolio-2026.pdf";
 const TOTAL_PAGES = 25;
 
 export default function Portfolio() {
@@ -34,9 +34,9 @@ export default function Portfolio() {
     const handleResize = () => {
       const width = typeof window !== 'undefined' ? window.innerWidth : 1200;
       const height = typeof window !== 'undefined' ? window.innerHeight : 800;
-      // Single page on phones (narrow width) or portrait orientation on small devices
+      // Single page on phones (narrow width) or portrait orientation on small/medium devices (like iPad Pro)
       const isPhone = width < 768;
-      const isPortraitSmall = width < 1024 && height > width;
+      const isPortraitSmall = width <= 1024 && height > width;
       setIsSinglePage(isPhone || isPortraitSmall);
     };
     handleResize();

@@ -61,7 +61,7 @@ export default function FlipbookViewer({
       const ch = containerRef.current!.clientHeight;
       
       // Device-aware padding: phones get near-zero, tablets get minimal, desktops get comfortable
-      const isTablet = !isMobile && cw < 1024;
+      const isTablet = !isMobile && cw <= 1366;
       const horizontalPadding = isMobile ? 8 : (isTablet ? 40 : 120);
       const verticalPadding = isMobile ? 16 : (isTablet ? 60 : 120); 
       
