@@ -79,18 +79,14 @@ function AnimatedRoutes() {
   );
 }
 
-import ErrorBoundary from './components/ErrorBoundary';
-
 function App() {
   return (
-    <ErrorBoundary>
-      <Router>
-        <Navbar />
-        <main className="w-full relative z-0">
-          <AnimatedRoutes />
-        </main>
-      </Router>
-    </ErrorBoundary>
+    <Router>
+      <Navbar />
+      <main className="w-full relative z-0">
+        <AnimatedRoutes />
+      </main>
+    </Router>
   );
 }
 
