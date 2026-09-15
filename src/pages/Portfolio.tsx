@@ -31,10 +31,10 @@ export default function Portfolio() {
 
   // Detect device type for single-page vs two-page spread
   useEffect(() => {
-    let resizeTimer: NodeJS.Timeout;
+    let resizeTimer: number;
     const handleResize = () => {
       clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(() => {
+      resizeTimer = window.setTimeout(() => {
         const width = typeof window !== 'undefined' ? window.innerWidth : 1200;
         const height = typeof window !== 'undefined' ? window.innerHeight : 800;
         

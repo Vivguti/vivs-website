@@ -85,10 +85,10 @@ export default function FlipbookViewer({
 
     updateSize();
     
-    let resizeTimer: NodeJS.Timeout;
+    let resizeTimer: number;
     const handleResize = () => {
       clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(updateSize, 150);
+      resizeTimer = window.setTimeout(updateSize, 150);
     };
 
     window.addEventListener('resize', handleResize);
