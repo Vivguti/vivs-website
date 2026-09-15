@@ -8,4 +8,11 @@ export default defineConfig({
     tailwindcss(),
     react()
   ],
+  resolve: {
+    alias: [
+      { find: /^pdfjs-dist$/, replacement: 'pdfjs-dist/legacy/build/pdf.mjs' },
+      { find: /^pdfjs-dist\/build\/pdf\.worker\.min\.mjs$/, replacement: 'pdfjs-dist/legacy/build/pdf.worker.min.mjs' },
+      { find: /^pdfjs-dist\/web\/pdf_viewer\.mjs$/, replacement: 'pdfjs-dist/legacy/web/pdf_viewer.mjs' },
+    ],
+  },
 })
