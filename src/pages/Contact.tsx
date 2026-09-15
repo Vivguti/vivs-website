@@ -4,7 +4,7 @@ import { useState } from 'react';
 import type { FormEvent, ChangeEvent } from 'react';
 
 // Replace this with the URL you get from deploying your Google Apps Script Web App
-const GOOGLE_SCRIPT_URL = "YOUR_GOOGLE_SCRIPT_WEB_APP_URL_HERE";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyTb7pMIiQ-6scf19dRjaM674I4IujuLJaV4Y-bAa36H8Vaw3O5HBaz3ddt8vOfBb7_/exec";
 
 interface FormData {
   name: string;
