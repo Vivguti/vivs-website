@@ -31,13 +31,21 @@ export default function Portfolio() {
 
   // Detect device type for single-page vs two-page spread
   useEffect(() => {
+    let resizeTimer: NodeJS.Timeout;
     const handleResize = () => {
-      const width = typeof window !== 'undefined' ? window.innerWidth : 1200;
-      const height = typeof window !== 'undefined' ? window.innerHeight : 800;
-      // Single page on phones (narrow width) or portrait orientation on small/medium devices (like iPad Pro)
-      const isPhone = width < 768;
-      const isPortraitSmall = width <= 1024 && height > width;
-      setIsSinglePage(isPhone || isPortraitSmall);
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        const width = typeof window !== 'undefined' ? window.innerWidth : 1200;
+        const height = typeof window !== 'undefined' ? window.innerHeight : 800;
+        
+        // A phone is any device where the smallest dimension is less than 768px (handles both portrait and landscape iPhone)
+        const isPhone = Math.min(width, height) < 768;
+        
+        // Tablets in portrait mode (taller than they are wide, up to iPad Pro width)
+        const isPortraitSmall = width <= 1024 && height > width;
+        
+        setIsSinglePage(isPhone || isPortraitSmall);
+      }, 100);
     };
     handleResize();
     window.addEventListener('resize', handleResize);
@@ -45,6 +53,7 @@ export default function Portfolio() {
     return () => {
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('orientationchange', handleResize);
+      clearTimeout(resizeTimer);
     };
   }, []);
 

@@ -84,8 +84,18 @@ export default function FlipbookViewer({
     };
 
     updateSize();
-    window.addEventListener('resize', updateSize);
-    return () => window.removeEventListener('resize', updateSize);
+    
+    let resizeTimer: NodeJS.Timeout;
+    const handleResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(updateSize, 150);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(resizeTimer);
+    };
   }, [isMobile, aspectRatio]);
 
   const [resetKey, setResetKey] = useState(0);
@@ -212,7 +222,7 @@ export default function FlipbookViewer({
                       <div className="absolute inset-0 z-10" />
                     )}
                     <FlipBook
-                      key={resetKey}
+                      key={`${resetKey}-${isMobile ? 'single' : 'double'}-${Math.round(dimensions.width)}x${Math.round(dimensions.height)}`}
                       ref={flipBookRef}
                       width={dimensions.width}
                       height={dimensions.height}
