@@ -71,39 +71,30 @@ export default function Contact() {
     setError(null);
 
     try {
-      // Create x-www-form-urlencoded data which Google Apps Script parses nicely
       const formBody = new URLSearchParams();
       formBody.append('name', formData.name.trim());
       formBody.append('email', formData.email.trim());
       formBody.append('subject', formData.subject.trim());
       formBody.append('message', formData.message.trim());
 
-      const response = await fetch(GOOGLE_SCRIPT_URL, {
+      // Use no-cors mode to bypass Google Apps Script strict CORS policy
+      await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         body: formBody,
-        // mode: 'no-cors' can be used if you get CORS errors, but you won't be able to read the response.
-        // Google Apps Script requires following redirects properly or using text/plain.
+        mode: 'no-cors',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
       });
 
-      // The Web App should return a JSON indicating success
-      const result = await response.json();
-
-      if (result.status === 'success') {
-        setIsSuccess(true);
-        setLastSubmitTime(now);
-        setFormData({ name: '', email: '', subject: '', message: '', honeypot: '' });
-      } else {
-        throw new Error(result.message || 'Submission failed');
-      }
-    } catch (err) {
-      // If CORS fails completely or another network error occurs, we handle it here
-      console.error(err);
+      // In no-cors mode, we cannot read the response (opaque response). 
+      // If the fetch doesn't throw a network error, we assume it reached Google successfully.
+      setIsSuccess(true);
+      setLastSubmitTime(now);
+      setFormData({ name: '', email: '', subject: '', message: '', honeypot: '' });
       
-      // Fallback for strict CORS environments where fetch throws an error but the request still succeeded (no-cors scenario)
-      // If we got here but the request actually went through, the Google script wouldn't return proper CORS headers unless set up correctly.
+    } catch (err) {
+      console.error(err);
       setError("Failed to send message. Please try again or email directly.");
     } finally {
       setIsSubmitting(false);
