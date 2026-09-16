@@ -77,26 +77,26 @@ export default function Contact() {
       formBody.append('subject', formData.subject.trim());
       formBody.append('message', formData.message.trim());
 
-      // Use no-cors mode to bypass Google Apps Script strict CORS policy
-      await fetch(GOOGLE_SCRIPT_URL, {
+      // Fire and forget using no-cors mode to bypass Google Apps Script strict CORS policy
+      // We don't await this so the user instantly sees the success screen without waiting for Google to send the email
+      fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         body: formBody,
         mode: 'no-cors',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-      });
+      }).catch(err => console.error("Background fetch error:", err));
 
-      // In no-cors mode, we cannot read the response (opaque response). 
-      // If the fetch doesn't throw a network error, we assume it reached Google successfully.
+      // Instantly show success state
       setIsSuccess(true);
       setLastSubmitTime(now);
       setFormData({ name: '', email: '', subject: '', message: '', honeypot: '' });
+      setIsSubmitting(false);
       
     } catch (err) {
       console.error(err);
       setError("Failed to send message. Please try again or email directly.");
-    } finally {
       setIsSubmitting(false);
     }
   };
@@ -160,8 +160,27 @@ export default function Contact() {
           <GlassPanel delay={0.6} heavy>
             {isSuccess ? (
               <div className="flex flex-col items-center justify-center py-12 text-center h-full">
-                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(255,255,255,0.5)]">
-                  <span className="material-icons text-gray-900 text-3xl">check</span>
+                <div className="mb-6 flex justify-center w-full">
+                  <div className="monogram-coin !w-16 !h-16 shadow-[0_0_20px_rgba(255,255,255,0.5)] rounded-full">
+                    <div className="coin-inner">
+                      {/* Front face */}
+                      <div className="coin-face coin-front">
+                        <img
+                          src="/vg-monogram.png"
+                          alt="VG Monogram"
+                          className="monogram-img"
+                        />
+                      </div>
+                      {/* Back face (mirrored) */}
+                      <div className="coin-face coin-back">
+                        <img
+                          src="/vg-monogram.png"
+                          alt="VG Monogram"
+                          className="monogram-img"
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <h3 className="font-display text-2xl text-white mb-2">Message Sent</h3>
                 <p className="font-body text-white/80">Message sent successfully. Thank you for reaching out!</p>
