@@ -22,11 +22,11 @@ export default function Navbar() {
       className="fixed top-4 md:top-6 left-1/2 -translate-x-1/2 z-50 w-[95%] md:w-[90%] max-w-4xl"
     >
       <div 
-        className={`glass-nav px-3 md:px-6 py-2.5 md:py-3 transition-all duration-300 overflow-hidden ${isMobileMenuOpen ? 'rounded-[24px]' : 'rounded-full'}`}
+        className={`glass-nav px-4 md:px-6 py-3 transition-all duration-300 overflow-hidden ${isMobileMenuOpen ? 'rounded-[24px]' : 'rounded-full'}`}
       >
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center' }}>
+        <div className="flex items-center justify-between md:grid md:grid-cols-[1fr_auto_1fr]">
           {/* VG Monogram Logo */}
-          <Link to="/" className="monogram-coin !w-10 !h-10 md:!w-[54px] md:!h-[54px]" aria-label="Home" onClick={() => setIsMobileMenuOpen(false)}>
+          <Link to="/" className="monogram-coin !w-10 !h-10 md:!w-[54px] md:!h-[54px] md:justify-self-start" aria-label="Home" onClick={() => setIsMobileMenuOpen(false)}>
             <div className="coin-inner">
               {/* Front face */}
               <div className="coin-face coin-front">
@@ -71,21 +71,21 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Hamburger Button */}
-          <div className="md:hidden flex items-center justify-center">
+          <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-2 text-gray-800 hover:text-black transition-colors"
               aria-label="Toggle Menu"
             >
-              {isMobileMenuOpen ? <X size={20} strokeWidth={2.5} /> : <Menu size={20} strokeWidth={2.5} />}
+              {isMobileMenuOpen ? <X size={24} strokeWidth={2} /> : <Menu size={24} strokeWidth={2} />}
             </button>
           </div>
 
-          {/* Contact Button */}
+          {/* Contact Button (Desktop) */}
           <Link
             to="/contact"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="px-3 md:px-6 py-2 md:py-2.5 rounded-full bg-[#93A3B9] text-white text-[10px] md:text-xs font-semibold tracking-[0.1em] md:tracking-widest uppercase border border-white/30 hover:bg-[#8093AC] hover:scale-105 active:scale-95 transition-all duration-300 shadow-sm hover:shadow-md justify-self-end whitespace-nowrap"
+            className="hidden md:inline-flex px-6 py-2.5 rounded-full bg-[#93A3B9] text-white text-xs font-semibold tracking-widest uppercase border border-white/30 hover:bg-[#8093AC] hover:scale-105 active:scale-95 transition-all duration-300 shadow-sm hover:shadow-md justify-self-end whitespace-nowrap"
           >
             Contact
           </Link>
@@ -101,7 +101,7 @@ export default function Navbar() {
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="md:hidden overflow-hidden"
             >
-              <div className="flex flex-col items-center gap-4 pt-4 pb-3 border-t border-black/5 mt-3">
+              <div className="flex flex-col items-stretch gap-2 pt-4 pb-2 border-t border-black/10 mt-4">
                 {navLinks.map((link) => {
                   const isActive = location.pathname === link.path;
                   return (
@@ -109,19 +109,28 @@ export default function Navbar() {
                       key={link.name}
                       to={link.path}
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="relative text-[12px] font-semibold tracking-[0.1em] uppercase text-gray-800 hover:text-black transition-colors w-full text-center py-2"
+                      className="relative text-[14px] font-semibold tracking-widest uppercase text-gray-800 hover:text-black transition-colors text-center py-3 rounded-lg hover:bg-black/5"
                     >
                       {link.name}
                       {isActive && (
                         <motion.div
                           layoutId="activeNavIndicatorMobile"
-                          className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-gray-900 rounded-full"
+                          className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-gray-900 rounded-full"
                           transition={{ type: "spring", stiffness: 300, damping: 30 }}
                         />
                       )}
                     </Link>
                   );
                 })}
+                
+                {/* Mobile Contact Button */}
+                <Link
+                  to="/contact"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="mt-2 text-center py-3 rounded-full bg-[#93A3B9] text-white text-[13px] font-semibold tracking-widest uppercase border border-white/30 hover:bg-[#8093AC] transition-all duration-300 shadow-sm"
+                >
+                  Contact
+                </Link>
               </div>
             </motion.div>
           )}
