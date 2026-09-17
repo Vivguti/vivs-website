@@ -179,6 +179,7 @@ export default function Home() {
               src="/hero-render-4.png"
               alt="Architectural Section — Full Render"
               className="hero-section-img w-full h-full object-cover object-center transform-gpu"
+              fetchPriority="high"
             />
           </motion.div>
 
@@ -240,7 +241,7 @@ export default function Home() {
             <div className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 text-left shrink-0">
               <Link to="/project/living-infrastructure" className="group glass-panel rounded-3xl overflow-hidden p-5 md:p-8 transition-all duration-500 hover:bg-white/20">
                 <div className="w-full h-56 md:h-80 lg:h-96 rounded-2xl overflow-hidden mb-5">
-                  <img src="/living-infrastructure-board.png" alt="Living Infrastructure" className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700" />
+                  <img src="/living-infrastructure-board.png" alt="Living Infrastructure" loading="lazy" className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700" />
                 </div>
                 <span className="font-body text-[11px] md:text-sm tracking-[0.2em] uppercase text-white/60 block mb-2">01 / Urban Community</span>
                 <h3 className="font-display text-3xl md:text-4xl lg:text-5xl text-white group-hover:text-white/90">Living Infrastructure</h3>
@@ -248,7 +249,7 @@ export default function Home() {
 
               <Link to="/selected-works" className="group glass-panel rounded-3xl overflow-hidden p-5 md:p-8 transition-all duration-500 hover:bg-white/20">
                 <div className="w-full h-56 md:h-80 lg:h-96 rounded-2xl overflow-hidden mb-5">
-                  <img src="/prismatic-infill-board-full.png" alt="Prismatic Infill" className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700" style={{ objectPosition: 'center 0%' }} />
+                  <img src="/prismatic-infill-board-full.png" alt="Prismatic Infill" loading="lazy" className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700" style={{ objectPosition: 'center 0%' }} />
                 </div>
                 <span className="font-body text-[11px] md:text-sm tracking-[0.2em] uppercase text-white/60 block mb-2">02 / Residential</span>
                 <h3 className="font-display text-3xl md:text-4xl lg:text-5xl text-white group-hover:text-white/90">Prismatic Infill</h3>

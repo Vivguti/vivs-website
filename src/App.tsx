@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 
@@ -6,13 +6,15 @@ import { AnimatePresence } from 'framer-motion';
 import Navbar from './components/Navbar';
 import PageWrapper from './components/PageWrapper';
 
-// Pages
+// Initial Load Page (Keep static to avoid flash on first visit)
 import Home from './pages/Home';
-import About from './pages/About';
-import SelectedWorks from './pages/SelectedWorks';
-import Portfolio from './pages/Portfolio';
-import Contact from './pages/Contact';
-import LivingInfrastructure from './pages/LivingInfrastructure';
+
+// Lazy Loaded Pages
+const About = lazy(() => import('./pages/About'));
+const SelectedWorks = lazy(() => import('./pages/SelectedWorks'));
+const Portfolio = lazy(() => import('./pages/Portfolio'));
+const Contact = lazy(() => import('./pages/Contact'));
+const LivingInfrastructure = lazy(() => import('./pages/LivingInfrastructure'));
 
 import './index.css';
 
@@ -26,7 +28,7 @@ function AnimatedRoutes() {
   }, [location.pathname]);
 
   return (
-    <AnimatePresence>
+    <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route
           path="/"
@@ -36,7 +38,9 @@ function AnimatedRoutes() {
           path="/about"
           element={
             <PageWrapper>
-              <About />
+              <Suspense fallback={<div className="w-full h-screen bg-transparent" />}>
+                <About />
+              </Suspense>
             </PageWrapper>
           }
         />
@@ -44,21 +48,27 @@ function AnimatedRoutes() {
           path="/selected-works"
           element={
             <PageWrapper>
-              <SelectedWorks />
+              <Suspense fallback={<div className="w-full h-screen bg-transparent" />}>
+                <SelectedWorks />
+              </Suspense>
             </PageWrapper>
           }
         />
         <Route
           path="/portfolio"
           element={
-            <Portfolio />
+            <Suspense fallback={<div className="w-full h-screen bg-transparent" />}>
+              <Portfolio />
+            </Suspense>
           }
         />
         <Route
           path="/project/living-infrastructure"
           element={
             <PageWrapper>
-              <LivingInfrastructure />
+              <Suspense fallback={<div className="w-full h-screen bg-transparent" />}>
+                <LivingInfrastructure />
+              </Suspense>
             </PageWrapper>
           }
         />
@@ -70,7 +80,9 @@ function AnimatedRoutes() {
           path="/contact"
           element={
             <PageWrapper>
-              <Contact />
+              <Suspense fallback={<div className="w-full h-screen bg-transparent" />}>
+                <Contact />
+              </Suspense>
             </PageWrapper>
           }
         />

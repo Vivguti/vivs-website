@@ -313,6 +313,7 @@ function ProjectSection({ project, index }: { project: (typeof projects)[0]; ind
           <img
             src={project.boardImage}
             alt={`${project.title} Architectural Board`}
+            loading="lazy"
             className="w-full h-auto object-contain rounded-2xl"
           />
         </motion.div>
