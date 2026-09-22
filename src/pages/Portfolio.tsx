@@ -12,8 +12,8 @@ import FlipbookControls from '../components/flipbook/FlipbookControls';
 import FlipbookViewer from '../components/flipbook/FlipbookViewer';
 import ThumbnailDrawer from '../components/flipbook/ThumbnailDrawer';
 
-const PDF_URL = "/portfolio/vivs-portfolio-2026.pdf";
-const TOTAL_PAGES = 25;
+const PDF_URL = "/portfolio/portfolio-2026-v2.pdf";
+const TOTAL_PAGES = 26;
 
 export default function Portfolio() {
   const [numPages, setNumPages] = useState<number>(TOTAL_PAGES);
