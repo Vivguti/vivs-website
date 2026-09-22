@@ -18,7 +18,7 @@ const TOTAL_PAGES = 26;
 export default function Portfolio() {
   const [numPages, setNumPages] = useState<number>(TOTAL_PAGES);
   const [currentSpread, setCurrentSpread] = useState(0); 
-  const maxSpread = Math.ceil(TOTAL_PAGES / 2);
+  const maxSpread = Math.floor(TOTAL_PAGES / 2) + 1;
   
   const [isSinglePage, setIsSinglePage] = useState(false);
   const [zoom, setZoom] = useState(1);
@@ -206,6 +206,7 @@ export default function Portfolio() {
         <FlipbookControls 
           currentSpread={currentSpread}
           totalSpreads={isSinglePage ? numPages : maxSpread}
+          totalPages={numPages}
           isMobile={isSinglePage}
           onToggleThumbnails={() => setShowThumbnails(!showThumbnails)}
           onZoomIn={handleZoomIn}

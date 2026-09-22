@@ -3,6 +3,7 @@ import { Grid, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 interface FlipbookControlsProps {
   currentSpread: number;
   totalSpreads: number;
+  totalPages: number;
   isMobile: boolean;
   onToggleThumbnails: () => void;
   onZoomIn: () => void;
@@ -14,6 +15,7 @@ interface FlipbookControlsProps {
 export default function FlipbookControls({
   currentSpread,
   totalSpreads,
+  totalPages,
   isMobile,
   onToggleThumbnails,
   onZoomIn,
@@ -26,15 +28,19 @@ export default function FlipbookControls({
   const getPageCounter = () => {
     if (isMobile) {
       const p = currentSpread + 1;
-      return `${p.toString().padStart(2, '0')} / ${totalSpreads}`;
+      return `${p.toString().padStart(2, '0')} / ${totalPages}`;
     } else {
       if (currentSpread === 0) {
-        return `01 / ${totalSpreads * 2 - 1}`;
+        return `01 / ${totalPages}`;
+      } else if (currentSpread === totalSpreads - 1 && totalPages % 2 === 0) {
+        // Even total pages means the last spread is just the back cover
+        const pLeft = currentSpread * 2;
+        return `${pLeft.toString().padStart(2, '0')} / ${totalPages}`;
       } else {
         const pLeft = currentSpread * 2;
-        const pRight = currentSpread * 2 + 1;
-        const maxP = totalSpreads * 2 - 1;
-        return `${pLeft.toString().padStart(2, '0')}-${pRight.toString().padStart(2, '0')} / ${maxP}`;
+        let pRight = currentSpread * 2 + 1;
+        if (pRight > totalPages) pRight = totalPages;
+        return `${pLeft.toString().padStart(2, '0')}-${pRight.toString().padStart(2, '0')} / ${totalPages}`;
       }
     }
   };
