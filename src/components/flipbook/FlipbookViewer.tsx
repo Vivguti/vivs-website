@@ -80,9 +80,13 @@ export default function FlipbookViewer({
         targetWidth = targetHeight * aspectRatio;
       }
 
-      setDimensions({ 
-        width: Math.floor(targetWidth), 
-        height: Math.floor(targetHeight) 
+      setDimensions(prev => {
+        const newW = Math.floor(targetWidth);
+        const newH = Math.floor(targetHeight);
+        if (Math.abs(prev.width - newW) > 5 || Math.abs(prev.height - newH) > 5) {
+          return { width: newW, height: newH };
+        }
+        return prev;
       });
     };
 
@@ -109,9 +113,13 @@ export default function FlipbookViewer({
       const pageFlip = flipBookRef.current.pageFlip();
       const targetPage = isMobile ? currentSpread : currentSpread * 2;
       
-      if (pageFlip.getCurrentPageIndex() !== targetPage && !isResetting) {
+      // Determine what spread we are currently looking at
+      const currentIndex = pageFlip.getCurrentPageIndex();
+      const currentVisualSpread = isMobile ? currentIndex : Math.floor((currentIndex + 1) / 2);
+      
+      if (currentVisualSpread !== currentSpread && !isResetting) {
         // If looping back to the cover from deep in the book, trigger smooth reset
-        if (targetPage === 0 && pageFlip.getCurrentPageIndex() > 2) {
+        if (targetPage === 0 && currentIndex > 2) {
           setIsResetting(true);
         } else {
           pageFlip.flip(targetPage);
@@ -177,7 +185,7 @@ export default function FlipbookViewer({
         dragElastic={0.05}
       >
         {/* Instant cover placeholder — loads almost immediately from tiny 1-page PDF */}
-        {!fullPdfLoaded && (
+        <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-1000 z-0 ${fullPdfLoaded ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
           <Document
             file={COVER_PDF_URL}
             onLoadSuccess={onCoverLoadSuccess}
@@ -201,7 +209,7 @@ export default function FlipbookViewer({
               </motion.div>
             )}
           </Document>
-        )}
+        </div>
 
         {/* Full portfolio — loads in the background, crossfades in when ready */}
         <div className={fullPdfLoaded ? 'block' : 'hidden'}>
