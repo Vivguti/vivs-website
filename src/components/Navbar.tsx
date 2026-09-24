@@ -23,7 +23,20 @@ export default function Navbar() {
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
       className="fixed top-4 md:top-6 left-0 right-0 z-50 flex justify-center pointer-events-none"
     >
-      <div className="w-[95%] md:w-[90%] max-w-4xl">
+      {/* Mobile Backdrop to close menu when tapping outside */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 -top-10 h-[120vh] w-screen pointer-events-auto z-40"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+      <div className="w-[95%] md:w-[90%] max-w-4xl z-50">
         
         {/* --- MOBILE LAYOUT: Individual Circles --- */}
         <div className="md:hidden flex justify-between items-start w-full">

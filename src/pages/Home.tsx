@@ -67,6 +67,122 @@ function ManifestoBlock({
   );
 }
 
+// ─── Mobile Auto-Playing Home (No scroll-jacking) ──────────────────────────────
+function MobileHome() {
+  const [step, setStep] = useState(0);
+
+  useEffect(() => {
+    // 0 = image only, 1 = M1, 2 = image only, 3 = M2
+    const sequence = [
+      { step: 0, duration: 1500 },
+      { step: 1, duration: 4500 },
+      { step: 2, duration: 1000 },
+      { step: 3, duration: 4500 },
+    ];
+    
+    let currentIdx = 0;
+    let timeoutId: any;
+    
+    const nextStep = () => {
+      currentIdx = (currentIdx + 1) % sequence.length;
+      setStep(sequence[currentIdx].step);
+      timeoutId = setTimeout(nextStep, sequence[currentIdx].duration);
+    };
+    
+    timeoutId = setTimeout(nextStep, sequence[0].duration);
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  return (
+    <main className="w-full flex flex-col bg-[#93A3B9]">
+      {/* 100vh Hero */}
+      <section className="relative w-full h-[100svh] overflow-hidden">
+        {/* Background Layer */}
+        <div className="absolute inset-0 z-0">
+          <img src="/hero-render-4.webp" className="w-full h-full object-cover object-center" fetchPriority="high" />
+        </div>
+        <div className="absolute inset-0 z-[1]" style={{ background: 'radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.5) 100%)' }} />
+        <div className="absolute inset-0 z-[2]" style={{ background: 'radial-gradient(ellipse at 55% 50%, rgba(255,190,90,0.12) 0%, rgba(255,140,50,0.06) 40%, transparent 70%)' }} />
+        <div className="absolute top-0 left-0 right-0 h-[140px] z-[9] bg-gradient-to-b from-[#93A3B9]/80 to-transparent pointer-events-none" />
+
+        {/* Timed Text */}
+        <div className="absolute left-[5%] top-1/2 -translate-y-1/2 z-[10] w-[90%] max-w-[300px] pointer-events-none h-[120px]">
+          {/* Manifesto 1 */}
+          <motion.div 
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: step === 1 ? 1 : 0, y: step === 1 ? 0 : -15 }}
+            transition={{ duration: 1.2, ease: "easeInOut" }}
+            className="absolute inset-0 flex items-center"
+          >
+            <p className="hero-manifesto text-[24px] sm:text-[28px] leading-[1.1]">
+              {MANIFESTO_1.join(' ')}
+            </p>
+          </motion.div>
+          
+          {/* Manifesto 2 */}
+          <motion.div 
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: step === 3 ? 1 : 0, y: step === 3 ? 0 : -15 }}
+            transition={{ duration: 1.2, ease: "easeInOut" }}
+            className="absolute inset-0 flex items-center"
+          >
+            <p className="hero-manifesto text-[24px] sm:text-[28px] leading-[1.1]">
+              {MANIFESTO_2.join(' ')}
+            </p>
+          </motion.div>
+        </div>
+        
+        {/* Scroll down indicator */}
+        <motion.div
+          animate={{ opacity: [0.3, 1, 0.3], y: [0, 5, 0] }}
+          transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[11] flex flex-col items-center gap-2 pointer-events-none"
+        >
+          <span className="font-body text-[9px] tracking-[0.3em] uppercase leading-none text-white/60">Scroll</span>
+          <div className="w-px h-6 bg-white/40" />
+        </motion.div>
+      </section>
+
+      {/* Selected Works (Natural Scroll Flow) */}
+      <section className="w-full bg-[#93A3B9] flex flex-col justify-center items-center py-16 px-5 relative z-[15]">
+        <div className="w-full flex flex-col items-center mb-10">
+          <h2 className="font-display text-4xl text-white tracking-tight mb-4">
+            <span className="font-light">Selected</span> <span className="font-light italic">Works</span>
+          </h2>
+          <Link to="/selected-works" className="cta-explore shadow-xl py-3 px-6">
+            <span className="text-sm">Explore My Work</span>
+            <span className="cta-arrow !w-8 !h-8">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 16 16 12 12 8" />
+                <line x1="8" y1="12" x2="16" y2="12" />
+              </svg>
+            </span>
+          </Link>
+        </div>
+
+        <div className="w-full flex flex-col gap-8">
+          <Link to="/project/living-infrastructure" className="group glass-panel rounded-3xl overflow-hidden p-5 transition-all duration-500 active:bg-white/20">
+            <div className="w-full h-56 rounded-2xl overflow-hidden mb-5">
+              <img src="/living-infrastructure-board.webp" alt="Living Infrastructure" loading="lazy" className="w-full h-full object-cover object-top" />
+            </div>
+            <span className="font-body text-[11px] tracking-[0.2em] uppercase text-white/60 block mb-2">01 / Urban Community</span>
+            <h3 className="font-display text-3xl text-white">Living Infrastructure</h3>
+          </Link>
+
+          <Link to="/selected-works" className="group glass-panel rounded-3xl overflow-hidden p-5 transition-all duration-500 active:bg-white/20">
+            <div className="w-full h-56 rounded-2xl overflow-hidden mb-5">
+              <img src="/prismatic-infill-board-full.webp" alt="Prismatic Infill" loading="lazy" className="w-full h-full object-cover object-top" style={{ objectPosition: 'center 0%' }} />
+            </div>
+            <span className="font-body text-[11px] tracking-[0.2em] uppercase text-white/60 block mb-2">02 / Residential</span>
+            <h3 className="font-display text-3xl text-white">Prismatic Infill</h3>
+          </Link>
+        </div>
+      </section>
+    </main>
+  );
+}
+
 // ─── Main Component ────────────────────────────────────────────────────────────
 export default function Home() {
   const heroRef = useRef<HTMLElement>(null);
@@ -86,6 +202,10 @@ export default function Home() {
     window.addEventListener('resize', handler);
     return () => window.removeEventListener('resize', handler);
   }, []);
+
+  if (isMobile) {
+    return <MobileHome />;
+  }
 
   const { scrollYProgress } = useScroll({
     target: heroRef,
