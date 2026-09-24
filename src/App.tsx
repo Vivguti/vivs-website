@@ -1,4 +1,4 @@
-import { useEffect, Suspense, lazy } from 'react';
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 
@@ -13,9 +13,7 @@ import About from './pages/About';
 import SelectedWorks from './pages/SelectedWorks';
 import Contact from './pages/Contact';
 import LivingInfrastructure from './pages/LivingInfrastructure';
-
-// Lazy Loaded Heavy Pages
-const Portfolio = lazy(() => import('./pages/Portfolio'));
+import Portfolio from './pages/Portfolio';
 
 import './index.css';
 
@@ -53,16 +51,7 @@ function AnimatedRoutes() {
         />
         <Route
           path="/portfolio"
-          element={
-            <Suspense fallback={
-              <div className="w-full h-screen flex flex-col items-center justify-center bg-[#e5e5e5]">
-                <div className="w-8 h-8 border-2 border-gray-400 border-t-gray-900 rounded-full animate-spin mb-4" />
-                <span className="text-gray-500 text-xs font-semibold tracking-widest uppercase">Loading Portfolio...</span>
-              </div>
-            }>
-              <Portfolio />
-            </Suspense>
-          }
+          element={<Portfolio />}
         />
         <Route
           path="/project/living-infrastructure"
