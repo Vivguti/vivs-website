@@ -17,18 +17,22 @@ interface FlipbookViewerProps {
 }
 
 // Create a wrapper component for the page so react-pageflip can inject its refs
-const PageWrapper = forwardRef<HTMLDivElement, { pageNumber: number, width: number }>(
-  ({ pageNumber, width }, ref) => {
+const PageWrapper = forwardRef<HTMLDivElement, { pageNumber: number, width: number, isNearby: boolean, isMobile: boolean }>(
+  ({ pageNumber, width, isNearby, isMobile }, ref) => {
     return (
       <div ref={ref} className="bg-white overflow-hidden flex items-center justify-center h-full w-full">
-        <Page 
-          pageNumber={pageNumber}
-          width={width}
-          renderTextLayer={false}
-          renderAnnotationLayer={false}
-          devicePixelRatio={Math.max(window.devicePixelRatio || 1, 3)}
-          className="pointer-events-none"
-        />
+        {isNearby ? (
+          <Page 
+            pageNumber={pageNumber}
+            width={width}
+            renderTextLayer={false}
+            renderAnnotationLayer={false}
+            devicePixelRatio={Math.max(window.devicePixelRatio || 1, isMobile ? 2 : 3)}
+            className="pointer-events-none"
+          />
+        ) : (
+          <div className="w-full h-full bg-white flex items-center justify-center" />
+        )}
       </div>
     );
   }
@@ -209,7 +213,7 @@ export default function FlipbookViewer({
                   width={dimensions.width}
                   renderTextLayer={false}
                   renderAnnotationLayer={false}
-                  devicePixelRatio={Math.max(window.devicePixelRatio || 1, 3)}
+                  devicePixelRatio={Math.max(window.devicePixelRatio || 1, isMobile ? 2 : 3)}
                   className="pointer-events-none"
                 />
               </motion.div>
@@ -259,13 +263,18 @@ export default function FlipbookViewer({
                       className="shadow-2xl mx-auto"
                       style={{ margin: '0 auto' }}
                     >
-                      {Array.from(new Array(numPages), (_, index) => (
-                        <PageWrapper 
-                          key={index} 
-                          pageNumber={index + 1} 
-                          width={dimensions.width} 
-                        />
-                      ))}
+                      {Array.from(new Array(numPages), (_, index) => {
+                        const targetPageForDistance = isMobile ? currentSpread : currentSpread * 2;
+                        return (
+                          <PageWrapper 
+                            key={index} 
+                            pageNumber={index + 1} 
+                            width={dimensions.width} 
+                            isNearby={Math.abs(index - targetPageForDistance) <= 4}
+                            isMobile={isMobile}
+                          />
+                        );
+                      })}
                       {/* Add an empty back cover if the page count is odd so the last spread aligns correctly */}
                       {numPages % 2 !== 0 && (
                         <div className="bg-black overflow-hidden flex items-center justify-center h-full w-full" />

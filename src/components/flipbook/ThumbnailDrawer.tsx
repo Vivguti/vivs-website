@@ -40,6 +40,7 @@ export default function ThumbnailDrawer({ pdfUrl, numPages, onSelectPage, onClos
                   height={140}
                   renderTextLayer={false}
                   renderAnnotationLayer={false}
+                  devicePixelRatio={1}
                   className="shadow-sm border border-gray-200 object-cover"
                 />
                 <span className="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] text-gray-500 font-semibold tabular-nums">
