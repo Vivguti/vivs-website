@@ -16,7 +16,7 @@ export default function BackButton({ to = '/selected-works', label = 'Back to Se
       className="fixed top-8 left-6 md:left-12 z-50 flex items-center justify-center w-12 h-12 bg-transparent hover:bg-white/10 backdrop-blur-md rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.15)] transition-all hover:scale-110 active:scale-95 cursor-pointer overflow-hidden"
     >
       <img 
-        src="/icon-back.png" 
+        src="/icon-back.webp" 
         alt="Back direction arrow" 
         className="w-full h-full object-cover opacity-90 invert" 
       />

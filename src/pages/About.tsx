@@ -5,7 +5,7 @@ export default function About() {
   return (
     <div 
       className="relative min-h-screen bg-fixed bg-cover bg-center" 
-      style={{ backgroundImage: "url('/about-bg-2.jpg')" }}
+      style={{ backgroundImage: "url('/about-bg-2.webp')" }}
     >
       {/* Background overlay to ensure maximum text and glass panel legibility */}
       <div className="absolute inset-0 bg-[#0f172a]/45" />

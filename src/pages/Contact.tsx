@@ -166,7 +166,7 @@ export default function Contact() {
                       {/* Front face */}
                       <div className="coin-face coin-front">
                         <img
-                          src="/vg-monogram.png"
+                          src="/vg-monogram.webp"
                           alt="VG Monogram"
                           className="monogram-img"
                         />
@@ -174,7 +174,7 @@ export default function Contact() {
                       {/* Back face (mirrored) */}
                       <div className="coin-face coin-back">
                         <img
-                          src="/vg-monogram.png"
+                          src="/vg-monogram.webp"
                           alt="VG Monogram"
                           className="monogram-img"
                         />

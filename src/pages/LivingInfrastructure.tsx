@@ -15,7 +15,7 @@ export default function LivingInfrastructure() {
       >
         <div className="w-full max-w-[1600px] bg-white p-2 md:p-4 shadow-2xl">
           <img 
-            src="/living-infrastructure-board.png" 
+            src="/living-infrastructure-board.webp" 
             alt="Living Infrastructure Presentation Board" 
             className="w-full h-auto block"
           />

@@ -10,6 +10,20 @@ const navLinks = [
   { name: 'Portfolio', path: '/portfolio' },
 ];
 
+const pageImports: Record<string, () => Promise<any>> = {
+  '/about': () => import('../pages/About'),
+  '/selected-works': () => import('../pages/SelectedWorks'),
+  '/portfolio': () => import('../pages/Portfolio'),
+  '/project/living-infrastructure': () => import('../pages/LivingInfrastructure'),
+  '/contact': () => import('../pages/Contact'),
+};
+
+const preloadRoute = (path: string) => {
+  if (pageImports[path]) {
+    pageImports[path]().catch(console.error);
+  }
+};
+
 export default function Navbar() {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -31,14 +45,16 @@ export default function Navbar() {
             className="glass-nav p-2 rounded-full pointer-events-auto shadow-sm flex items-center justify-center" 
             aria-label="Home" 
             onClick={() => setIsMobileMenuOpen(false)}
+            onMouseEnter={() => preloadRoute('/')}
+            onTouchStart={() => preloadRoute('/')}
           >
             <div className="monogram-coin !w-10 !h-10">
               <div className="coin-inner">
                 <div className="coin-face coin-front">
-                  <img src="/vg-monogram.png" alt="VG Monogram" className="monogram-img" />
+                  <img src="/vg-monogram.webp" alt="VG Monogram" className="monogram-img" />
                 </div>
                 <div className="coin-face coin-back">
-                  <img src="/vg-monogram.png" alt="VG Monogram" className="monogram-img" />
+                  <img src="/vg-monogram.webp" alt="VG Monogram" className="monogram-img" />
                 </div>
               </div>
             </div>
@@ -70,6 +86,8 @@ export default function Navbar() {
                         key={link.name}
                         to={link.path}
                         onClick={() => setIsMobileMenuOpen(false)}
+                        onMouseEnter={() => preloadRoute(link.path)}
+                        onTouchStart={() => preloadRoute(link.path)}
                         className="relative text-[14px] font-semibold tracking-widest uppercase text-gray-800 hover:text-black transition-colors text-center py-3 rounded-lg hover:bg-black/5"
                       >
                         {link.name}
@@ -89,6 +107,8 @@ export default function Navbar() {
                   <Link
                     to="/contact"
                     onClick={() => setIsMobileMenuOpen(false)}
+                    onMouseEnter={() => preloadRoute('/contact')}
+                    onTouchStart={() => preloadRoute('/contact')}
                     className="mt-1 text-center py-3 rounded-full bg-[#93A3B9] text-white text-[13px] font-semibold tracking-widest uppercase border border-white/30 hover:bg-[#8093AC] transition-all duration-300 shadow-sm"
                   >
                     Contact
@@ -102,13 +122,19 @@ export default function Navbar() {
         {/* --- DESKTOP LAYOUT: Long Rectangular Pill --- */}
         <div className="hidden md:grid glass-nav px-6 py-3 rounded-full pointer-events-auto grid-cols-[1fr_auto_1fr] items-center">
           {/* VG Monogram Logo */}
-          <Link to="/" className="monogram-coin !w-[54px] !h-[54px] justify-self-start" aria-label="Home">
+          <Link 
+            to="/" 
+            className="monogram-coin !w-[54px] !h-[54px] justify-self-start" 
+            aria-label="Home"
+            onMouseEnter={() => preloadRoute('/')}
+            onTouchStart={() => preloadRoute('/')}
+          >
             <div className="coin-inner">
               <div className="coin-face coin-front">
-                <img src="/vg-monogram.png" alt="VG Monogram" className="monogram-img" />
+                <img src="/vg-monogram.webp" alt="VG Monogram" className="monogram-img" />
               </div>
               <div className="coin-face coin-back">
-                <img src="/vg-monogram.png" alt="VG Monogram" className="monogram-img" />
+                <img src="/vg-monogram.webp" alt="VG Monogram" className="monogram-img" />
               </div>
             </div>
           </Link>
@@ -121,6 +147,8 @@ export default function Navbar() {
                 <Link
                   key={link.name}
                   to={link.path}
+                  onMouseEnter={() => preloadRoute(link.path)}
+                  onTouchStart={() => preloadRoute(link.path)}
                   className="relative text-[13px] font-semibold tracking-widest uppercase text-gray-800 hover:text-black transition-colors"
                 >
                   {link.name}
@@ -139,6 +167,8 @@ export default function Navbar() {
           {/* Contact Button (Desktop) */}
           <Link
             to="/contact"
+            onMouseEnter={() => preloadRoute('/contact')}
+            onTouchStart={() => preloadRoute('/contact')}
             className="inline-flex px-6 py-2.5 rounded-full bg-[#93A3B9] text-white text-xs font-semibold tracking-widest uppercase border border-white/30 hover:bg-[#8093AC] hover:scale-105 active:scale-95 transition-all duration-300 shadow-sm hover:shadow-md justify-self-end whitespace-nowrap"
           >
             Contact

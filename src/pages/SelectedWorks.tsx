@@ -9,9 +9,9 @@ const projects = [
     title: 'Living Infrastructure',
     subtitle: 'Urban Community · 2026',
     description: 'An architectural exploration of urban community living.',
-    image: '/living-infrastructure-board.png',
+    image: '/living-infrastructure-board.webp',
     imagePosition: 'object-top',
-    boardImage: '/living-infrastructure-board.png',
+    boardImage: '/living-infrastructure-board.webp',
     materialsLabel: 'Software Used:',
     materials: ['Rhino 3D', 'Adobe Photoshop'],
     diagrams: [
@@ -28,9 +28,9 @@ const projects = [
     subtitle: 'Residential Â· 2026',
     description:
       'This project explores attainable modular housing as a strategy for increasing residential density in Austin while maintaining spatial quality, adaptability, and long-term sustainability. Rather than expanding through low-density sprawl or high-rise development, the proposal rethinks housing as a compact, repeatable system of interconnected volumes that can be inserted within a typical residential lot. The goal is to increase middle-income housing access without disrupting neighborhood scale.',
-    image: '/prismatic-infill-board-full.png',
+    image: '/prismatic-infill-board-full.webp',
     imagePosition: 'object-top',
-    boardImage: '/prismatic-infill-board-full.png',
+    boardImage: '/prismatic-infill-board-full.webp',
     materialsLabel: 'Software Used:',
     materials: ['Rhino 3D', 'Adobe Photoshop', 'AutoCAD'],
     diagrams: [
@@ -57,9 +57,9 @@ const projects = [
     subtitle: 'Residential Â· 2025',
     description:
       'This project explores a dystopian vision of changing a common space of a kitchen into adapting to a fictional world that rethinks the kitchen as a controlled system that balances limited resources with social interaction. A top lever is the main design feature, opening and closing the space to activate the kitchen\'s functions. When the lever is engaged it shifts from a storage mode into a shared gathering area underneath a protective dome. The vision of this project was to have the kitchen encourage collaboration and routine. Even in a dystopian future, the space shows that architecture should not only help people survive but also give them a place to connect.',
-    image: '/the-last-kitchen-board-full.png',
+    image: '/the-last-kitchen-board-full.webp',
     imagePosition: 'object-center',
-    boardImage: '/the-last-kitchen-board-full.png',
+    boardImage: '/the-last-kitchen-board-full.webp',
     materialsLabel: 'Software Used:',
     materials: ['Rhino 3D', 'Adobe Fresco', 'Google Gemini'],
     diagrams: [
@@ -86,9 +86,9 @@ const projects = [
     subtitle: 'Commercial Â· 2025',
     description:
       'This project explored a communal bathhouse over a hill and throughout the development of the project our team wanted to develop a linear and central axis of grouped massings that would divide up the activities amoung the bathhouse. What was later developed through the project that made this project successful was having the actual baths be the central focus while also being the joining factor for all the individual massing clusters. The central baths follow a stacked terraced system with central staircases and the back baths break the central axis into having an asymmetrical appearance to promote a more open space that also overlooks the surrounding levee. The main goal of this design was to keep a central alignment of geometric clusters while breaking the symmetry to add more community to the back pools.',
-    image: '/trinity-bathhouse-board-full.png',
+    image: '/trinity-bathhouse-board-full.webp',
     imagePosition: 'object-center',
-    boardImage: '/trinity-bathhouse-board-full.png',
+    boardImage: '/trinity-bathhouse-board-full.webp',
     materialsLabel: 'Software Used:',
     materials: ['Rhino 3D', '3D Printed Model Making', 'Adobe Photoshop'],
     diagrams: [

@@ -8,7 +8,7 @@ const projects = [
     id: '01',
     title: 'Living Infrastructure',
     blurb: 'A modular multi-unit housing system promoting neighborly interaction and urban density.',
-    image: '/living-infrastructure-board-full.png',
+    image: '/living-infrastructure-board-full.webp',
     imagePosition: 'center top',
     type: 'Urban Residential Community',
     route: '/project/living-infrastructure',
@@ -17,7 +17,7 @@ const projects = [
     id: '02',
     title: 'Prismatic Infill',
     blurb: 'A study in light, shadow, and minimalist residential spacing.',
-    image: '/prismatic-infill-board-full.png',
+    image: '/prismatic-infill-board-full.webp',
     imagePosition: '50% 25%',
     type: 'Residential',
   },
@@ -25,7 +25,7 @@ const projects = [
     id: '03',
     title: 'The Last Kitchen',
     blurb: 'A systemic exploration of vertical high-density living modules.',
-    image: '/the-last-kitchen-board-full.png',
+    image: '/the-last-kitchen-board-full.webp',
     imagePosition: '50% 80%',
     type: 'Residential',
   },
@@ -33,7 +33,7 @@ const projects = [
     id: '04',
     title: 'Trinity Modern Bathhouse',
     blurb: 'Blurring the boundaries between interior and exterior water rituals.',
-    image: '/trinity-bathhouse-board-full.png',
+    image: '/trinity-bathhouse-board-full.webp',
     imagePosition: '50% 50%',
     type: 'Commercial',
   },
@@ -121,7 +121,7 @@ export default function ProjectGallery() {
               View Full Archive
             </span>
             <div className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 group-hover/cta:scale-110 overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 shadow-lg group-hover/cta:bg-white/20">
-              <img src="/icon-back.png" alt="arrow right" className="w-full h-full object-cover scale-x-[-1] opacity-90 invert" />
+              <img src="/icon-back.webp" alt="arrow right" className="w-full h-full object-cover scale-x-[-1] opacity-90 invert" />
             </div>
           </button>
         </motion.div>
@@ -172,10 +172,10 @@ export default function ProjectGallery() {
                 <span 
                   className="w-6 h-6 scale-x-[-1] bg-[#1A2340] inline-block opacity-90" 
                   style={{
-                    maskImage: "url('/icon-back.png')",
+                    maskImage: "url('/icon-back.webp')",
                     maskSize: "contain",
                     maskRepeat: "no-repeat",
-                    WebkitMaskImage: "url('/icon-back.png')",
+                    WebkitMaskImage: "url('/icon-back.webp')",
                     WebkitMaskSize: "contain",
                     WebkitMaskRepeat: "no-repeat"
                   }}
@@ -326,7 +326,7 @@ export default function ProjectGallery() {
               See All Work
             </span>
             <div className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 group-hover/btn:scale-110 overflow-hidden bg-white/10 backdrop-blur-md border border-white/20 shadow-lg group-hover/btn:bg-white/20">
-              <img src="/icon-back.png" alt="arrow right" className="w-full h-full object-cover scale-x-[-1] opacity-90 invert" />
+              <img src="/icon-back.webp" alt="arrow right" className="w-full h-full object-cover scale-x-[-1] opacity-90 invert" />
             </div>
           </button>
         </motion.div>
