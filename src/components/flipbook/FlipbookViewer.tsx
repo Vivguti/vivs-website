@@ -122,7 +122,13 @@ export default function FlipbookViewer({
         if (targetPage === 0 && currentIndex > 2) {
           setIsResetting(true);
         } else {
-          pageFlip.flip(targetPage);
+          // If jumping more than 1 spread (e.g. from Contents drawer), jump instantly to avoid state loops
+          // If just going next/prev (diff === 1), animate the flip
+          if (Math.abs(currentVisualSpread - currentSpread) > 1) {
+            pageFlip.turnToPage(targetPage);
+          } else {
+            pageFlip.flip(targetPage);
+          }
         }
       }
     }
