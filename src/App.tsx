@@ -7,14 +7,15 @@ import Navbar from './components/Navbar';
 import PageWrapper from './components/PageWrapper';
 
 // Initial Load Page (Keep static to avoid flash on first visit)
+// Pages
 import Home from './pages/Home';
+import About from './pages/About';
+import SelectedWorks from './pages/SelectedWorks';
+import Contact from './pages/Contact';
+import LivingInfrastructure from './pages/LivingInfrastructure';
 
-// Lazy Loaded Pages
-const About = lazy(() => import('./pages/About'));
-const SelectedWorks = lazy(() => import('./pages/SelectedWorks'));
+// Lazy Loaded Heavy Pages
 const Portfolio = lazy(() => import('./pages/Portfolio'));
-const Contact = lazy(() => import('./pages/Contact'));
-const LivingInfrastructure = lazy(() => import('./pages/LivingInfrastructure'));
 
 import './index.css';
 
@@ -38,9 +39,7 @@ function AnimatedRoutes() {
           path="/about"
           element={
             <PageWrapper>
-              <Suspense fallback={<div className="w-full h-screen bg-transparent" />}>
-                <About />
-              </Suspense>
+              <About />
             </PageWrapper>
           }
         />
@@ -48,16 +47,19 @@ function AnimatedRoutes() {
           path="/selected-works"
           element={
             <PageWrapper>
-              <Suspense fallback={<div className="w-full h-screen bg-transparent" />}>
-                <SelectedWorks />
-              </Suspense>
+              <SelectedWorks />
             </PageWrapper>
           }
         />
         <Route
           path="/portfolio"
           element={
-            <Suspense fallback={<div className="w-full h-screen bg-transparent" />}>
+            <Suspense fallback={
+              <div className="w-full h-screen flex flex-col items-center justify-center bg-[#e5e5e5]">
+                <div className="w-8 h-8 border-2 border-gray-400 border-t-gray-900 rounded-full animate-spin mb-4" />
+                <span className="text-gray-500 text-xs font-semibold tracking-widest uppercase">Loading Portfolio...</span>
+              </div>
+            }>
               <Portfolio />
             </Suspense>
           }
@@ -66,9 +68,7 @@ function AnimatedRoutes() {
           path="/project/living-infrastructure"
           element={
             <PageWrapper>
-              <Suspense fallback={<div className="w-full h-screen bg-transparent" />}>
-                <LivingInfrastructure />
-              </Suspense>
+              <LivingInfrastructure />
             </PageWrapper>
           }
         />
@@ -80,9 +80,7 @@ function AnimatedRoutes() {
           path="/contact"
           element={
             <PageWrapper>
-              <Suspense fallback={<div className="w-full h-screen bg-transparent" />}>
-                <Contact />
-              </Suspense>
+              <Contact />
             </PageWrapper>
           }
         />
