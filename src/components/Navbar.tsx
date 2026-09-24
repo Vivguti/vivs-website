@@ -10,18 +10,8 @@ const navLinks = [
   { name: 'Portfolio', path: '/portfolio' },
 ];
 
-const pageImports: Record<string, () => Promise<any>> = {
-  '/about': () => import('../pages/About'),
-  '/selected-works': () => import('../pages/SelectedWorks'),
-  '/portfolio': () => import('../pages/Portfolio'),
-  '/project/living-infrastructure': () => import('../pages/LivingInfrastructure'),
-  '/contact': () => import('../pages/Contact'),
-};
-
 const preloadRoute = (path: string) => {
-  if (pageImports[path]) {
-    pageImports[path]().catch(console.error);
-  }
+  // No-op since we reverted to static imports
 };
 
 export default function Navbar() {
