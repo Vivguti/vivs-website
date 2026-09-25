@@ -13,14 +13,14 @@ const pageVariants: Variants = {
   animate: {
     opacity: 1,
     transition: {
-      duration: 0.8,
-      ease: [0.22, 1, 0.36, 1], // Custom cubic-bezier for a smooth, elegant ease-out
+      duration: 0.4,
+      ease: [0.22, 1, 0.36, 1],
     },
   },
   exit: {
     opacity: 0,
     transition: {
-      duration: 0.5,
+      duration: 0.2,
       ease: [0.22, 1, 0.36, 1],
     },
   },
@@ -31,6 +31,7 @@ export default function PageWrapper({ children, className = '' }: PageWrapperPro
     <motion.div
       initial="initial"
       animate="animate"
+      exit="exit"
       variants={pageVariants}
       className={`min-h-screen w-full ${className}`}
     >

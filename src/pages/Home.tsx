@@ -14,7 +14,7 @@ const MANIFESTO_2 = [
   'a better', 'architect', 'than I was', 'yesterday.',
 ];
 
-// ─── Staggered word sub-component (scroll-linked across mobile & desktop) ──────
+// ─── Staggered word sub-component (scroll-linked for desktop) ───────────────
 function ManifestoWord({
   word, index, scrollProgress, baseOffset, stagger,
 }: {
@@ -67,127 +67,29 @@ function ManifestoBlock({
   );
 }
 
-// ─── Mobile Auto-Playing Home (No scroll-jacking) ──────────────────────────────
-function MobileHome() {
-  const [step, setStep] = useState(0);
-
-  useEffect(() => {
-    // 0 = image only, 1 = M1, 2 = image only, 3 = M2
-    const sequence = [
-      { step: 0, duration: 1500 },
-      { step: 1, duration: 4500 },
-      { step: 2, duration: 1000 },
-      { step: 3, duration: 4500 },
-    ];
-    
-    let currentIdx = 0;
-    let timeoutId: any;
-    
-    const nextStep = () => {
-      currentIdx = (currentIdx + 1) % sequence.length;
-      setStep(sequence[currentIdx].step);
-      timeoutId = setTimeout(nextStep, sequence[currentIdx].duration);
-    };
-    
-    timeoutId = setTimeout(nextStep, sequence[0].duration);
-    return () => clearTimeout(timeoutId);
-  }, []);
+// ─── Mobile Manifesto Word (scroll-linked, lighter) ─────────────────────────
+function MobileManifestoWord({
+  word, index, scrollProgress, baseOffset, stagger,
+}: {
+  word: string; index: number; scrollProgress: MotionValue<number>;
+  baseOffset: number; stagger: number;
+}) {
+  const start = baseOffset + index * stagger;
+  const end = start + 0.06;
+  const opacity = useTransform(scrollProgress, [start, end], [0, 1]);
+  const y = useTransform(scrollProgress, [start, end], [10, 0]);
 
   return (
-    <main className="w-full flex flex-col bg-[#93A3B9]">
-      {/* 100vh Hero */}
-      <section className="relative w-full h-[100svh] overflow-hidden">
-        {/* Background Layer */}
-        <div className="absolute inset-0 z-0">
-          <img src="/hero-render-4.webp" className="w-full h-full object-cover object-center" fetchPriority="high" />
-        </div>
-        <div className="absolute inset-0 z-[1]" style={{ background: 'radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.5) 100%)' }} />
-        <div className="absolute inset-0 z-[2]" style={{ background: 'radial-gradient(ellipse at 55% 50%, rgba(255,190,90,0.12) 0%, rgba(255,140,50,0.06) 40%, transparent 70%)' }} />
-        <div className="absolute top-0 left-0 right-0 h-[140px] z-[9] bg-gradient-to-b from-[#93A3B9]/80 to-transparent pointer-events-none" />
-
-        {/* Timed Text */}
-        <div className="absolute left-[5%] top-1/2 -translate-y-1/2 z-[10] w-[90%] max-w-[300px] pointer-events-none h-[120px]">
-          {/* Manifesto 1 */}
-          <motion.div 
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: step === 1 ? 1 : 0, y: step === 1 ? 0 : -15 }}
-            transition={{ duration: 1.2, ease: "easeInOut" }}
-            className="absolute inset-0 flex items-center"
-          >
-            <p className="hero-manifesto text-[24px] sm:text-[28px] leading-[1.1]">
-              {MANIFESTO_1.join(' ')}
-            </p>
-          </motion.div>
-          
-          {/* Manifesto 2 */}
-          <motion.div 
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: step === 3 ? 1 : 0, y: step === 3 ? 0 : -15 }}
-            transition={{ duration: 1.2, ease: "easeInOut" }}
-            className="absolute inset-0 flex items-center"
-          >
-            <p className="hero-manifesto text-[24px] sm:text-[28px] leading-[1.1]">
-              {MANIFESTO_2.join(' ')}
-            </p>
-          </motion.div>
-        </div>
-        
-        {/* Scroll down indicator */}
-        <motion.div
-          animate={{ opacity: [0.3, 1, 0.3], y: [0, 5, 0] }}
-          transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-          className="absolute bottom-6 left-1/2 -translate-x-1/2 z-[11] flex flex-col items-center gap-2 pointer-events-none"
-        >
-          <span className="font-body text-[9px] tracking-[0.3em] uppercase leading-none text-white/60">Scroll</span>
-          <div className="w-px h-6 bg-white/40" />
-        </motion.div>
-      </section>
-
-      {/* Selected Works (Natural Scroll Flow) */}
-      <section className="w-full bg-[#93A3B9] flex flex-col justify-center items-center py-16 px-5 relative z-[15]">
-        <div className="w-full flex flex-col items-center mb-10">
-          <h2 className="font-display text-4xl text-white tracking-tight mb-4">
-            <span className="font-light">Selected</span> <span className="font-light italic">Works</span>
-          </h2>
-          <Link to="/selected-works" className="cta-explore shadow-xl py-3 px-6">
-            <span className="text-sm">Explore My Work</span>
-            <span className="cta-arrow !w-8 !h-8">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 16 16 12 12 8" />
-                <line x1="8" y1="12" x2="16" y2="12" />
-              </svg>
-            </span>
-          </Link>
-        </div>
-
-        <div className="w-full flex flex-col gap-8">
-          <Link to="/project/living-infrastructure" className="group glass-panel rounded-3xl overflow-hidden p-5 transition-all duration-500 active:bg-white/20">
-            <div className="w-full h-56 rounded-2xl overflow-hidden mb-5">
-              <img src="/living-infrastructure-board.webp" alt="Living Infrastructure" loading="lazy" className="w-full h-full object-cover object-top" />
-            </div>
-            <span className="font-body text-[11px] tracking-[0.2em] uppercase text-white/60 block mb-2">01 / Urban Community</span>
-            <h3 className="font-display text-3xl text-white">Living Infrastructure</h3>
-          </Link>
-
-          <Link to="/selected-works" className="group glass-panel rounded-3xl overflow-hidden p-5 transition-all duration-500 active:bg-white/20">
-            <div className="w-full h-56 rounded-2xl overflow-hidden mb-5">
-              <img src="/prismatic-infill-board-full.webp" alt="Prismatic Infill" loading="lazy" className="w-full h-full object-cover object-top" style={{ objectPosition: 'center 0%' }} />
-            </div>
-            <span className="font-body text-[11px] tracking-[0.2em] uppercase text-white/60 block mb-2">02 / Residential</span>
-            <h3 className="font-display text-3xl text-white">Prismatic Infill</h3>
-          </Link>
-        </div>
-      </section>
-    </main>
+    <motion.span className="inline-block mr-[0.3em] transform-gpu" style={{ opacity, y }}>
+      {word}
+    </motion.span>
   );
 }
 
-// ─── Main Component ────────────────────────────────────────────────────────────
-export default function Home() {
+// ─── Mobile Home (scroll-linked, lightweight) ──────────────────────────────────
+function MobileHome() {
   const heroRef = useRef<HTMLElement>(null);
 
-  // Always reset scroll to the very top when Home mounts
   useEffect(() => {
     if ('scrollRestoration' in window.history) {
       window.history.scrollRestoration = 'manual';
@@ -195,24 +97,188 @@ export default function Home() {
     window.scrollTo(0, 0);
   }, []);
 
-  // Detect mobile screen to tune scroll height and spring physics
-  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
-  useEffect(() => {
-    const handler = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener('resize', handler);
-    return () => window.removeEventListener('resize', handler);
-  }, []);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end end'],
+  });
 
-  if (isMobile) {
-    return <MobileHome />;
-  }
+  // Lighter spring for mobile — fast response, less bouncing
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 40,
+    mass: 0.8,
+    restDelta: 0.001,
+  });
+
+  // Manifesto 1: appear 0.0→0.20, hold, fade 0.25→0.35
+  const m1_op = useTransform(smoothProgress, [0.0, 0.05, 0.25, 0.35], [0, 1, 1, 0]);
+  const m1_y = useTransform(smoothProgress, [0.0, 0.05, 0.25, 0.35], [20, 0, 0, -15]);
+
+  // Manifesto 2: appear 0.32→0.42, hold, fade 0.50→0.60
+  const m2_op = useTransform(smoothProgress, [0.32, 0.42, 0.50, 0.60], [0, 1, 1, 0]);
+  const m2_y = useTransform(smoothProgress, [0.32, 0.42, 0.50, 0.60], [20, 0, 0, -15]);
+
+  // Blue overlay + CTA section
+  const blueOverlayOp = useTransform(smoothProgress, [0.55, 0.72], [0, 1.0]);
+  const ctaOp = useTransform(smoothProgress, [0.60, 0.80], [0, 1]);
+  const ctaY = useTransform(smoothProgress, [0.58, 0.90], ['30vh', '0vh']);
+
+  // Scroll cue
+  const cueOp = useTransform(scrollYProgress, [0, 0.04], [1, 0]);
+
+  return (
+    <section
+      ref={heroRef}
+      aria-label="Portfolio hero"
+      className="relative w-full hero-scroll-container"
+      style={{ height: '300vh' }}
+    >
+      <div className="sticky top-0 w-full h-[100svh] overflow-hidden transform-gpu bg-[#93A3B9]">
+        {/* Background Image — static on mobile (no parallax = no jank) */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="/hero-render-4.webp"
+            alt="Architectural Section — Full Render"
+            className="w-full h-full object-cover object-center"
+            fetchPriority="high"
+          />
+        </div>
+
+        {/* Cinematic Vignette */}
+        <div
+          className="absolute inset-0 z-[1] pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.5) 100%)' }}
+        />
+
+        {/* Warm Glow */}
+        <div
+          className="absolute inset-0 z-[2] pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse at 55% 50%, rgba(255,190,90,0.12) 0%, rgba(255,140,50,0.06) 40%, transparent 70%)' }}
+        />
+
+        {/* Top Gradient for nav legibility */}
+        <div className="absolute top-0 left-0 right-0 h-[140px] z-[9] bg-gradient-to-b from-[#93A3B9]/80 to-transparent pointer-events-none" />
+
+        {/* Manifesto 1 — scroll-linked word-by-word on mobile */}
+        <motion.div
+          className="absolute left-[5%] top-1/2 -translate-y-1/2 z-[10] pointer-events-none w-[85%] max-w-[300px] transform-gpu"
+          style={{ opacity: m1_op, y: m1_y }}
+        >
+          <div className="hero-manifesto text-[22px] sm:text-[26px] leading-[1.15]">
+            {MANIFESTO_1.map((word, i) => (
+              <MobileManifestoWord
+                key={`m1-${word}-${i}`}
+                word={word}
+                index={i}
+                scrollProgress={smoothProgress}
+                baseOffset={0.02}
+                stagger={0.02}
+              />
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Manifesto 2 — scroll-linked word-by-word on mobile */}
+        <motion.div
+          className="absolute left-[5%] top-1/2 -translate-y-1/2 z-[10] pointer-events-none w-[85%] max-w-[300px] transform-gpu"
+          style={{ opacity: m2_op, y: m2_y }}
+        >
+          <div className="hero-manifesto text-[22px] sm:text-[26px] leading-[1.15]">
+            {MANIFESTO_2.map((word, i) => (
+              <MobileManifestoWord
+                key={`m2-${word}-${i}`}
+                word={word}
+                index={i}
+                scrollProgress={smoothProgress}
+                baseOffset={0.34}
+                stagger={0.02}
+              />
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Selected Works CTA — slides up at the end */}
+        <motion.div
+          className="absolute inset-0 z-[12] flex flex-col justify-center items-center pt-16 pb-8 px-5 text-center pointer-events-auto"
+          style={{ opacity: ctaOp, y: ctaY }}
+        >
+          <div className="w-full flex flex-col items-center mb-8">
+            <h2 className="font-display text-4xl text-white tracking-tight mb-4">
+              <span className="font-light">Selected</span>{' '}
+              <span className="font-light italic">Works</span>
+            </h2>
+            <Link to="/selected-works" className="cta-explore shadow-xl py-3 px-6">
+              <span className="text-sm">Explore My Work</span>
+              <span className="cta-arrow !w-8 !h-8">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 16 16 12 12 8" />
+                  <line x1="8" y1="12" x2="16" y2="12" />
+                </svg>
+              </span>
+            </Link>
+          </div>
+
+          <div className="w-full flex flex-col gap-6">
+            <Link to="/project/living-infrastructure" className="group glass-panel rounded-3xl overflow-hidden p-4 transition-all duration-500 active:bg-white/20">
+              <div className="w-full h-48 rounded-2xl overflow-hidden mb-4">
+                <img src="/living-infrastructure-board.webp" alt="Living Infrastructure" loading="lazy" className="w-full h-full object-cover object-top" />
+              </div>
+              <span className="font-body text-[11px] tracking-[0.2em] uppercase text-white/60 block mb-1">01 / Urban Community</span>
+              <h3 className="font-display text-2xl text-white">Living Infrastructure</h3>
+            </Link>
+
+            <Link to="/selected-works" className="group glass-panel rounded-3xl overflow-hidden p-4 transition-all duration-500 active:bg-white/20">
+              <div className="w-full h-48 rounded-2xl overflow-hidden mb-4">
+                <img src="/prismatic-infill-board-full.webp" alt="Prismatic Infill" loading="lazy" className="w-full h-full object-cover object-top" style={{ objectPosition: 'center 0%' }} />
+              </div>
+              <span className="font-body text-[11px] tracking-[0.2em] uppercase text-white/60 block mb-1">02 / Residential</span>
+              <h3 className="font-display text-2xl text-white">Prismatic Infill</h3>
+            </Link>
+          </div>
+        </motion.div>
+
+        {/* Blue Overlay */}
+        <motion.div
+          className="absolute inset-0 z-[8] pointer-events-none"
+          style={{ opacity: blueOverlayOp, backgroundColor: '#93A3B9' }}
+        />
+
+        {/* Scroll Cue */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.8 }}
+          style={{ opacity: cueOp }}
+          aria-hidden="true"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[11] flex flex-col items-center gap-2 pointer-events-none"
+        >
+          <span className="font-body text-[9px] tracking-[0.3em] uppercase leading-none text-white/50">Scroll</span>
+          <div className="relative w-px h-8 overflow-hidden">
+            <div className="scroll-line" />
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Desktop Home (scroll-linked parallax) ─────────────────────────────────────
+function DesktopHome() {
+  const heroRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ['start start', 'end end'],
   });
 
-  // Critically-damped spring interpolation
   const smoothProgress = useSpring(scrollYProgress, {
     stiffness: 70,
     damping: 35,
@@ -220,38 +286,31 @@ export default function Home() {
     restDelta: 0.001,
   });
 
-  /* ═══════════════════════════════════════════════════════════════════════════
-     SINGLE IMAGE — Render visible from the start, gentle cinematic zoom
-  ═══════════════════════════════════════════════════════════════════════════ */
+  // Image parallax
   const img_scale = useTransform(smoothProgress, [0, 0.5, 1.0], [1.08, 1.03, 1.0]);
-  const img_y     = useTransform(smoothProgress, [0, 1.0], ['0%', '-5%']);
+  const img_y = useTransform(smoothProgress, [0, 1.0], ['0%', '-5%']);
 
-  // Warm ambient glow
+  // Warm glow
   const glowOp = useTransform(smoothProgress, [0.15, 0.35, 0.55, 0.70], [0, 0.7, 0.7, 0]);
 
-  /* ═══════════════════════════════════════════════════════════════════════════
-     TEXT — Manifesto 1 appears first, fades out, Manifesto 2 appears, fades out
-  ═══════════════════════════════════════════════════════════════════════════ */
-  // Manifesto 1 container
+  // Manifesto 1
   const m1_op = useTransform(smoothProgress, [0.02, 0.06, 0.22, 0.30], [0, 1, 1, 0]);
-  const m1_y  = useTransform(smoothProgress, [0.02, 0.06, 0.22, 0.30], [40, 0, 0, -30]);
+  const m1_y = useTransform(smoothProgress, [0.02, 0.06, 0.22, 0.30], [40, 0, 0, -30]);
 
-  // Manifesto 2 container
+  // Manifesto 2
   const m2_op = useTransform(smoothProgress, [0.28, 0.34, 0.48, 0.56], [0, 1, 1, 0]);
-  const m2_y  = useTransform(smoothProgress, [0.28, 0.34, 0.48, 0.56], [40, 0, 0, -30]);
+  const m2_y = useTransform(smoothProgress, [0.28, 0.34, 0.48, 0.56], [40, 0, 0, -30]);
 
-  /* ═══════════════════════════════════════════════════════════════════════════
-     FINAL FRAME — Blue overlay + Selected Works slides up immediately after
-  ═══════════════════════════════════════════════════════════════════════════ */
+  // Blue overlay + CTA
   const blueOverlayOp = useTransform(smoothProgress, [0.50, 0.70], [0, 1.0]);
-  const ctaOp    = useTransform(smoothProgress, [0.55, 0.80], [0, 1]);
-  const ctaY     = useTransform(smoothProgress, [0.52, 0.88], ['40vh', '0vh']);
+  const ctaOp = useTransform(smoothProgress, [0.55, 0.80], [0, 1]);
+  const ctaY = useTransform(smoothProgress, [0.52, 0.88], ['40vh', '0vh']);
   const ctaScale = useTransform(smoothProgress, [0.52, 0.88], [0.92, 1]);
 
-  // Scroll cue — use raw progress so it hides immediately when user starts scrolling
+  // Scroll cue
   const cueOp = useTransform(scrollYProgress, [0, 0.035], [1, 0]);
 
-  // Progress bar visibility
+  // Progress bar
   const progressVis = useTransform(scrollYProgress, [0, 0.05, 0.70, 1.0], [0, 1, 1, 1]);
 
   // Background tone shift
@@ -261,165 +320,174 @@ export default function Home() {
     ['#93A3B9', '#8A9BB3', '#7B8FA6', '#6E8298', '#93A3B9']
   );
 
-  // Vignette intensity
+  // Vignette
   const vignetteOp = useTransform(smoothProgress, [0, 0.10, 0.50, 0.80], [0.6, 0.3, 0.2, 0.4]);
 
   return (
-    <>
-      {/* ████  HERO — Single image, two text transitions, quick scroll  ████ */}
-      <section
-        ref={heroRef}
-        aria-label="Portfolio hero"
-        className="relative w-full hero-scroll-container"
-        style={{ height: isMobile ? '250vh' : '350vh' }}
+    <section
+      ref={heroRef}
+      aria-label="Portfolio hero"
+      className="relative w-full hero-scroll-container"
+      style={{ height: '350vh' }}
+    >
+      <motion.div
+        className="sticky top-0 w-full h-screen overflow-hidden transform-gpu"
+        style={{ backgroundColor: bgColor, willChange: 'background-color' }}
       >
+        {/* Cinematic Vignette */}
         <motion.div
-          className="sticky top-0 w-full h-screen overflow-hidden transform-gpu"
-          style={{ backgroundColor: bgColor, willChange: 'background-color' }}
+          className="absolute inset-0 pointer-events-none z-[5]"
+          style={{
+            opacity: vignetteOp,
+            background: 'radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.5) 100%)',
+          }}
+        />
+
+        {/* Image Layer */}
+        <motion.div
+          className="absolute inset-0 z-[2] transform-gpu"
+          style={{
+            scale: img_scale,
+            y: img_y,
+            willChange: 'transform',
+          }}
         >
-          {/* ── Cinematic Vignette ── */}
-          <motion.div
-            className="absolute inset-0 pointer-events-none z-[5]"
-            style={{
-              opacity: vignetteOp,
-              background: 'radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.5) 100%)',
-            }}
+          <img
+            src="/hero-render-4.webp"
+            alt="Architectural Section — Full Render"
+            className="hero-section-img w-full h-full object-cover object-center transform-gpu"
+            fetchPriority="high"
           />
-
-          {/* ═══════ SINGLE IMAGE LAYER ═══════ */}
-          <motion.div
-            className="absolute inset-0 z-[2] transform-gpu"
-            style={{
-              scale: isMobile ? 1 : img_scale,
-              y: isMobile ? 0 : img_y,
-              willChange: 'transform',
-            }}
-          >
-            <img
-              src="/hero-render-4.webp"
-              alt="Architectural Section — Full Render"
-              className="hero-section-img w-full h-full object-cover object-center transform-gpu"
-              fetchPriority="high"
-            />
-          </motion.div>
-
-          {/* Warm Glow overlay */}
-          <motion.div
-            className="absolute inset-0 z-[4] pointer-events-none"
-            style={{
-              opacity: glowOp,
-              background: 'radial-gradient(ellipse at 55% 50%, rgba(255,190,90,0.12) 0%, rgba(255,140,50,0.06) 40%, transparent 70%)',
-            }}
-          />
-
-          {/* ═══════ TYPOGRAPHY ═══════ */}
-
-          {/* Manifesto 1 */}
-          <ManifestoBlock
-            words={MANIFESTO_1}
-            containerClass="absolute left-[4%] md:left-[7%] top-1/2 -translate-y-1/2 z-[10] pointer-events-none max-w-[260px] sm:max-w-[300px] md:max-w-[360px]"
-            containerStyle={{ opacity: m1_op, y: m1_y }}
-            scrollProgress={smoothProgress}
-            baseOffset={0.02}
-            stagger={0.018}
-          />
-
-          {/* Manifesto 2 */}
-          <ManifestoBlock
-            words={MANIFESTO_2}
-            containerClass="absolute left-[4%] md:left-[7%] top-1/2 -translate-y-1/2 z-[10] pointer-events-none max-w-[260px] sm:max-w-[300px] md:max-w-[380px]"
-            containerStyle={{ opacity: m2_op, y: m2_y }}
-            scrollProgress={smoothProgress}
-            baseOffset={0.28}
-            stagger={0.018}
-          />
-
-          {/* ═══════ SELECTED WORKS SPREAD ═══════ */}
-          <motion.div
-            className="absolute inset-0 z-[12] flex flex-col justify-center items-center my-auto pt-20 pb-10 px-5 md:px-12 text-center pointer-events-auto"
-            style={{ opacity: ctaOp, y: ctaY, scale: ctaScale }}
-          >
-            <div className="max-w-4xl mx-auto flex flex-col items-center mb-8 shrink-0">
-              <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-white tracking-tight mb-4">
-                <span className="font-light">Selected</span> <span className="font-light italic">Works</span>
-              </h2>
-              <div className="w-full flex justify-center mt-2">
-                <Link to="/selected-works" className="cta-explore shadow-2xl py-3 px-6">
-                  <span className="text-sm">Explore My Work</span>
-                  <span className="cta-arrow !w-8 !h-8 md:!w-10 md:!h-10">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="md:!w-5 md:!h-5">
-                      <circle cx="12" cy="12" r="10" />
-                      <polyline points="12 16 16 12 12 8" />
-                      <line x1="8" y1="12" x2="16" y2="12" />
-                    </svg>
-                  </span>
-                </Link>
-              </div>
-            </div>
-
-            {/* Featured Project Previews Grid */}
-            <div className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 text-left shrink-0">
-              <Link to="/project/living-infrastructure" className="group glass-panel rounded-3xl overflow-hidden p-5 md:p-8 transition-all duration-500 hover:bg-white/20">
-                <div className="w-full h-56 md:h-80 lg:h-96 rounded-2xl overflow-hidden mb-5">
-                  <img src="/living-infrastructure-board.webp" alt="Living Infrastructure" loading="lazy" className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700" />
-                </div>
-                <span className="font-body text-[11px] md:text-sm tracking-[0.2em] uppercase text-white/60 block mb-2">01 / Urban Community</span>
-                <h3 className="font-display text-3xl md:text-4xl lg:text-5xl text-white group-hover:text-white/90">Living Infrastructure</h3>
-              </Link>
-
-              <Link to="/selected-works" className="group glass-panel rounded-3xl overflow-hidden p-5 md:p-8 transition-all duration-500 hover:bg-white/20">
-                <div className="w-full h-56 md:h-80 lg:h-96 rounded-2xl overflow-hidden mb-5">
-                  <img src="/prismatic-infill-board-full.webp" alt="Prismatic Infill" loading="lazy" className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700" style={{ objectPosition: 'center 0%' }} />
-                </div>
-                <span className="font-body text-[11px] md:text-sm tracking-[0.2em] uppercase text-white/60 block mb-2">02 / Residential</span>
-                <h3 className="font-display text-3xl md:text-4xl lg:text-5xl text-white group-hover:text-white/90">Prismatic Infill</h3>
-              </Link>
-            </div>
-          </motion.div>
-
-          {/* ═══════ BLUE OVERLAY ═══════ */}
-          <motion.div
-            className="absolute inset-0 z-[8] pointer-events-none"
-            style={{
-              opacity: blueOverlayOp,
-              backgroundColor: '#93A3B9',
-            }}
-          />
-
-          {/* ═══════ TOP GRADIENT (nav legibility) ═══════ */}
-          <div
-            aria-hidden="true"
-            className="absolute top-0 left-0 right-0 z-[9] pointer-events-none"
-            style={{
-              height: '140px',
-              background: 'linear-gradient(to bottom, rgba(147,163,185,0.8) 0%, transparent 100%)',
-            }}
-          />
-
-          {/* ═══════ SCROLL CUE ═══════ */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1.2, delay: 1 }}
-            style={{ opacity: cueOp }}
-            aria-hidden="true"
-            className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[11] flex flex-col items-center gap-2.5 pointer-events-none"
-          >
-            <span
-              className="font-body text-[9px] tracking-[0.3em] uppercase leading-none"
-              style={{ color: 'rgba(255,255,255,0.4)' }}
-            >
-              Scroll
-            </span>
-            <div className="relative w-px h-10 overflow-hidden">
-              <div className="scroll-line" />
-            </div>
-          </motion.div>
-
-          {/* ═══════ SCROLL PROGRESS ═══════ */}
-          <ScrollProgress progress={scrollYProgress} visible={progressVis} />
         </motion.div>
-      </section>
-    </>
+
+        {/* Warm Glow */}
+        <motion.div
+          className="absolute inset-0 z-[4] pointer-events-none"
+          style={{
+            opacity: glowOp,
+            background: 'radial-gradient(ellipse at 55% 50%, rgba(255,190,90,0.12) 0%, rgba(255,140,50,0.06) 40%, transparent 70%)',
+          }}
+        />
+
+        {/* Manifesto 1 */}
+        <ManifestoBlock
+          words={MANIFESTO_1}
+          containerClass="absolute left-[4%] md:left-[7%] top-1/2 -translate-y-1/2 z-[10] pointer-events-none max-w-[260px] sm:max-w-[300px] md:max-w-[360px]"
+          containerStyle={{ opacity: m1_op, y: m1_y }}
+          scrollProgress={smoothProgress}
+          baseOffset={0.02}
+          stagger={0.018}
+        />
+
+        {/* Manifesto 2 */}
+        <ManifestoBlock
+          words={MANIFESTO_2}
+          containerClass="absolute left-[4%] md:left-[7%] top-1/2 -translate-y-1/2 z-[10] pointer-events-none max-w-[260px] sm:max-w-[300px] md:max-w-[380px]"
+          containerStyle={{ opacity: m2_op, y: m2_y }}
+          scrollProgress={smoothProgress}
+          baseOffset={0.28}
+          stagger={0.018}
+        />
+
+        {/* Selected Works Spread */}
+        <motion.div
+          className="absolute inset-0 z-[12] flex flex-col justify-center items-center my-auto pt-20 pb-10 px-5 md:px-12 text-center pointer-events-auto"
+          style={{ opacity: ctaOp, y: ctaY, scale: ctaScale }}
+        >
+          <div className="max-w-4xl mx-auto flex flex-col items-center mb-8 shrink-0">
+            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-white tracking-tight mb-4">
+              <span className="font-light">Selected</span>{' '}
+              <span className="font-light italic">Works</span>
+            </h2>
+            <div className="w-full flex justify-center mt-2">
+              <Link to="/selected-works" className="cta-explore shadow-2xl py-3 px-6">
+                <span className="text-sm">Explore My Work</span>
+                <span className="cta-arrow !w-8 !h-8 md:!w-10 md:!h-10">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="md:!w-5 md:!h-5">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 16 16 12 12 8" />
+                    <line x1="8" y1="12" x2="16" y2="12" />
+                  </svg>
+                </span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Featured Project Previews Grid */}
+          <div className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 text-left shrink-0">
+            <Link to="/project/living-infrastructure" className="group glass-panel rounded-3xl overflow-hidden p-5 md:p-8 transition-all duration-500 hover:bg-white/20">
+              <div className="w-full h-56 md:h-80 lg:h-96 rounded-2xl overflow-hidden mb-5">
+                <img src="/living-infrastructure-board.webp" alt="Living Infrastructure" loading="lazy" className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700" />
+              </div>
+              <span className="font-body text-[11px] md:text-sm tracking-[0.2em] uppercase text-white/60 block mb-2">01 / Urban Community</span>
+              <h3 className="font-display text-3xl md:text-4xl lg:text-5xl text-white group-hover:text-white/90">Living Infrastructure</h3>
+            </Link>
+
+            <Link to="/selected-works" className="group glass-panel rounded-3xl overflow-hidden p-5 md:p-8 transition-all duration-500 hover:bg-white/20">
+              <div className="w-full h-56 md:h-80 lg:h-96 rounded-2xl overflow-hidden mb-5">
+                <img src="/prismatic-infill-board-full.webp" alt="Prismatic Infill" loading="lazy" className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700" style={{ objectPosition: 'center 0%' }} />
+              </div>
+              <span className="font-body text-[11px] md:text-sm tracking-[0.2em] uppercase text-white/60 block mb-2">02 / Residential</span>
+              <h3 className="font-display text-3xl md:text-4xl lg:text-5xl text-white group-hover:text-white/90">Prismatic Infill</h3>
+            </Link>
+          </div>
+        </motion.div>
+
+        {/* Blue Overlay */}
+        <motion.div
+          className="absolute inset-0 z-[8] pointer-events-none"
+          style={{
+            opacity: blueOverlayOp,
+            backgroundColor: '#93A3B9',
+          }}
+        />
+
+        {/* Top Gradient */}
+        <div
+          aria-hidden="true"
+          className="absolute top-0 left-0 right-0 z-[9] pointer-events-none"
+          style={{
+            height: '140px',
+            background: 'linear-gradient(to bottom, rgba(147,163,185,0.8) 0%, transparent 100%)',
+          }}
+        />
+
+        {/* Scroll Cue */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.2, delay: 1 }}
+          style={{ opacity: cueOp }}
+          aria-hidden="true"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[11] flex flex-col items-center gap-2.5 pointer-events-none"
+        >
+          <span
+            className="font-body text-[9px] tracking-[0.3em] uppercase leading-none"
+            style={{ color: 'rgba(255,255,255,0.4)' }}
+          >
+            Scroll
+          </span>
+          <div className="relative w-px h-10 overflow-hidden">
+            <div className="scroll-line" />
+          </div>
+        </motion.div>
+
+        {/* Scroll Progress */}
+        <ScrollProgress progress={scrollYProgress} visible={progressVis} />
+      </motion.div>
+    </section>
   );
+}
+
+// ─── Main Component ────────────────────────────────────────────────────────────
+export default function Home() {
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
+
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+
+  return isMobile ? <MobileHome /> : <DesktopHome />;
 }

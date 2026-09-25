@@ -25,7 +25,7 @@ const projects = [
   {
     id: '02',
     title: 'Prismatic Infill',
-    subtitle: 'Residential Â· 2026',
+    subtitle: 'Residential · 2026',
     description:
       'This project explores attainable modular housing as a strategy for increasing residential density in Austin while maintaining spatial quality, adaptability, and long-term sustainability. Rather than expanding through low-density sprawl or high-rise development, the proposal rethinks housing as a compact, repeatable system of interconnected volumes that can be inserted within a typical residential lot. The goal is to increase middle-income housing access without disrupting neighborhood scale.',
     image: '/prismatic-infill-board-full.webp',
